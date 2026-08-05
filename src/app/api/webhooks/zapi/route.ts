@@ -56,6 +56,8 @@ type ZapiWebhookPayload = {
   buttonsResponseMessage?: {
     selectedButtonId?: string;
     selectedDisplayText?: string;
+    buttonId?: string;
+    message?: string;
   };
   templateButtonReplyMessage?: {
     selectedId?: string;
@@ -170,6 +172,8 @@ async function extractIncomingMessage(payload: ZapiWebhookPayload) {
     payload.listResponseMessage?.title ??
     payload.listResponseMessage?.message ??
     payload.listResponseMessage?.selectedRowId ??
+    payload.buttonsResponseMessage?.message ??
+    payload.buttonsResponseMessage?.buttonId ??
     payload.buttonsResponseMessage?.selectedDisplayText ??
     payload.buttonsResponseMessage?.selectedButtonId ??
     payload.templateButtonReplyMessage?.selectedDisplayText ??
@@ -238,9 +242,11 @@ function findNestedMessageText(value: unknown, depth = 0): string | undefined {
   const preferredKeys = [
     "selectedDisplayText",
     "selectedButtonId",
+    "buttonId",
     "selectedRowId",
     "selectedId",
     "displayText",
+    "message",
     "paramsJson",
     "title",
     "description",
@@ -292,9 +298,11 @@ function findSelectionInRecord(value: unknown, depth = 0): string | undefined {
   const directKeys = [
     "selectedDisplayText",
     "selectedButtonId",
+    "buttonId",
     "selectedRowId",
     "selectedId",
     "displayText",
+    "message",
     "paramsJson",
     "buttonText",
     "title",
