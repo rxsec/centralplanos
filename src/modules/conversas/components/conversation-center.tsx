@@ -97,15 +97,17 @@ export function ConversationCenter() {
   const [isSavingTags, setIsSavingTags] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [createForm, setCreateForm] = useState({
-    phone: "",
+    phones: "",
     leadName: "",
     firstMessage: "",
     ownerUserId: "",
-    startWithChatbot: false,
+    startChatbotOnReply: true,
   });
+  const [createSelectedFile, setCreateSelectedFile] = useState<File | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [isRealtimeConnected, setIsRealtimeConnected] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const createFileInputRef = useRef<HTMLInputElement | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -332,24 +334,27 @@ export function ConversationCenter() {
   }
 
   async function startConversation() {
-    const response = await fetch("/api/conversations/start", {
+    const formData = new FormData();
+    formData.append("phones", createForm.phones);
+    formData.append("leadName", createForm.leadName);
+    formData.append("firstMessage", createForm.firstMessage);
+    formData.append("startChatbotOnReply", String(createForm.startChatbotOnReply));
+    formData.append("ownerUserId", createForm.startChatbotOnReply ? "" : (createForm.ownerUserId || currentUser?.id || ""));
+    if (createSelectedFile) formData.append("file", createSelectedFile);
+
+    const response = await fetch("/api/conversations/start-batch", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        phone: createForm.phone,
-        leadName: createForm.leadName,
-        firstMessage: createForm.startWithChatbot ? "" : createForm.firstMessage,
-        startWithChatbot: createForm.startWithChatbot,
-        ownerUserId: createForm.startWithChatbot ? null : (createForm.ownerUserId || currentUser?.id),
-      }),
+      body: formData,
     });
     const result = await response.json();
     setStatusMessage(result.message ?? null);
 
-    if (result.status === "success" && result.data?.id) {
+    if (result.status === "success") {
       setIsCreateOpen(false);
-      setCreateForm({ phone: "", leadName: "", firstMessage: "", ownerUserId: "", startWithChatbot: false });
-      await loadConversations({ preferredId: result.data.id, reset: true });
+      setCreateForm({ phones: "", leadName: "", firstMessage: "", ownerUserId: "", startChatbotOnReply: true });
+      setCreateSelectedFile(null);
+      if (createFileInputRef.current) createFileInputRef.current.value = "";
+      await loadConversations({ reset: true });
     }
   }
 
@@ -684,41 +689,77 @@ export function ConversationCenter() {
       {isCreateOpen ? (
         <Modal title="Novo número manual" onClose={() => setIsCreateOpen(false)}>
           <div className="space-y-4">
-            <Input placeholder="Nome do contato" value={createForm.leadName} onChange={(event) => setCreateForm((current) => ({ ...current, leadName: event.target.value }))} />
-            <Input placeholder="WhatsApp com DDI e DDD" value={createForm.phone} onChange={(event) => setCreateForm((current) => ({ ...current, phone: event.target.value }))} />
+            <Input placeholder="Nome de referência do envio" value={createForm.leadName} onChange={(event) => setCreateForm((current) => ({ ...current, leadName: event.target.value }))} />
+            <Textarea
+              placeholder={"WhatsApps com DDI e DDD\nUm por linha ou separados por vírgula"}
+              value={createForm.phones}
+              onChange={(event) => setCreateForm((current) => ({ ...current, phones: event.target.value }))}
+              className="min-h-28"
+            />
             <label className="flex items-start gap-3 rounded-md border p-3 text-sm">
               <input
                 type="checkbox"
                 className="mt-1 h-4 w-4"
-                checked={createForm.startWithChatbot}
+                checked={createForm.startChatbotOnReply}
                 onChange={(event) => setCreateForm((current) => ({
                   ...current,
-                  startWithChatbot: event.target.checked,
-                  firstMessage: event.target.checked ? "" : current.firstMessage,
+                  startChatbotOnReply: event.target.checked,
                 }))}
               />
               <div>
-                <p className="font-medium">Iniciar com a Marcia</p>
-                <p className="text-muted-foreground">Envia automaticamente a primeira mensagem do fluxo e deixa o chatbot ativo nessa conversa.</p>
+                <p className="font-medium">Marcia iniciar fluxo após a primeira mensagem</p>
+                <p className="text-muted-foreground">O envio sai normalmente, mas a Marcia só assume o atendimento quando a cliente responder pela primeira vez.</p>
               </div>
             </label>
             <select className="h-10 w-full rounded-md border bg-background px-3 text-sm" value={createForm.ownerUserId} onChange={(event) => setCreateForm((current) => ({ ...current, ownerUserId: event.target.value }))}>
-              <option value="">{createForm.startWithChatbot ? "Sem responsável humano" : "Assumir comigo"}</option>
+              <option value="">{createForm.startChatbotOnReply ? "Sem responsável humano" : "Assumir comigo"}</option>
               {(payload?.users ?? []).map((user) => (
                 <option key={user.id} value={user.id}>
                   {user.name}
                 </option>
               ))}
             </select>
+            <input
+              ref={createFileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(event) => setCreateSelectedFile(event.target.files?.[0] ?? null)}
+            />
+            <div className="rounded-md border p-3">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="font-medium">Imagem do envio</p>
+                  <p className="text-sm text-muted-foreground">Opcional. Envie uma arte e use a descrição abaixo como legenda.</p>
+                </div>
+                <Button type="button" variant="outline" onClick={() => createFileInputRef.current?.click()}>
+                  <Paperclip className="h-4 w-4" />
+                  {createSelectedFile ? "Trocar imagem" : "Adicionar imagem"}
+                </Button>
+              </div>
+              {createSelectedFile ? (
+                <div className="mt-3 flex items-start justify-between gap-3 rounded-md bg-muted/40 p-3 text-sm">
+                  <div>
+                    <p className="font-medium">{createSelectedFile.name}</p>
+                    <p className="text-xs text-muted-foreground">{Math.ceil(createSelectedFile.size / 1024)} KB</p>
+                  </div>
+                  <Button type="button" variant="ghost" size="icon" onClick={() => {
+                    setCreateSelectedFile(null);
+                    if (createFileInputRef.current) createFileInputRef.current.value = "";
+                  }}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : null}
+            </div>
             <Textarea
-              placeholder={createForm.startWithChatbot ? "A primeira mensagem automática da Marcia será enviada ao iniciar." : "Primeira mensagem opcional..."}
+              placeholder={createSelectedFile ? "Descrição da imagem / legenda do envio..." : "Mensagem ou descrição opcional do envio..."}
               value={createForm.firstMessage}
-              disabled={createForm.startWithChatbot}
               onChange={(event) => setCreateForm((current) => ({ ...current, firstMessage: event.target.value }))}
             />
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>Cancelar</Button>
-              <Button type="button" onClick={() => void startConversation()}>Iniciar conversa</Button>
+              <Button type="button" onClick={() => void startConversation()}>Preparar envio</Button>
             </div>
           </div>
         </Modal>

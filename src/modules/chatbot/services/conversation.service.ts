@@ -239,37 +239,138 @@ export class ConversationService {
     leadName?: string;
     firstMessage?: string;
     startWithChatbot?: boolean;
+    startChatbotOnReply?: boolean;
   }) {
-    const normalizedPhone = params.phone.replace(/\D/g, "");
-    if (!normalizedPhone || normalizedPhone.length < 12) {
+    const agent = await this.chatbotRepository.getDefaultAgent();
+    const conversation = await this.prepareConversation({
+      phone: params.phone,
+      ownerUserId: params.ownerUserId,
+      startWithChatbot: params.startWithChatbot,
+      startChatbotOnReply: params.startChatbotOnReply,
+      agentId: agent?.id,
+    });
+
+    await this.sendInitialConversationPayload({
+      conversationId: conversation.id,
+      firstMessage: params.firstMessage,
+      startWithChatbot: params.startWithChatbot,
+      startChatbotOnReply: params.startChatbotOnReply,
+      agentName: agent?.name,
+    });
+
+    return this.getDetail(conversation.id);
+  }
+
+  async startConversationBatch(params: {
+    phones: string[];
+    ownerUserId?: string | null;
+    leadName?: string;
+    firstMessage?: string;
+    startWithChatbot?: boolean;
+    startChatbotOnReply?: boolean;
+    media?: {
+      fileName: string;
+      mimeType: string;
+      dataUrl: string;
+    };
+  }) {
+    const agent = await this.chatbotRepository.getDefaultAgent();
+    const phones = Array.from(new Set(params.phones.map((phone) => normalizePhone(phone)).filter(Boolean)));
+    if (!phones.length) {
+      throw new Error("Informe ao menos um WhatsApp com DDI e DDD.");
+    }
+
+    const startedIds: string[] = [];
+
+    for (const phone of phones) {
+      const conversation = await this.prepareConversation({
+        phone,
+        ownerUserId: params.ownerUserId,
+        startWithChatbot: params.startWithChatbot,
+        startChatbotOnReply: params.startChatbotOnReply,
+        agentId: agent?.id,
+      });
+
+      if (params.media) {
+        await this.sendManualMedia({
+          conversationId: conversation.id,
+          fileName: params.media.fileName,
+          mimeType: params.media.mimeType,
+          dataUrl: params.media.dataUrl,
+          caption: params.firstMessage,
+        });
+      } else {
+        await this.sendInitialConversationPayload({
+          conversationId: conversation.id,
+          firstMessage: params.firstMessage,
+          startWithChatbot: params.startWithChatbot,
+          startChatbotOnReply: params.startChatbotOnReply,
+          agentName: agent?.name,
+        });
+      }
+
+      startedIds.push(conversation.id);
+    }
+
+    return {
+      total: startedIds.length,
+      conversationIds: startedIds,
+    };
+  }
+
+  private async prepareConversation(params: {
+    phone: string;
+    ownerUserId?: string | null;
+    startWithChatbot?: boolean;
+    startChatbotOnReply?: boolean;
+    agentId?: string;
+  }) {
+    const normalizedPhone = normalizePhone(params.phone);
+    if (!normalizedPhone) {
       throw new Error("Informe um WhatsApp com DDD e DDI 55.");
     }
 
-    const agent = await this.chatbotRepository.getDefaultAgent();
-    const conversation = await this.chatbotRepository.findOrCreateConversation(normalizedPhone, agent?.id);
+    const conversation = await this.chatbotRepository.findOrCreateConversation(normalizedPhone, params.agentId);
 
-    if (params.startWithChatbot) {
+    if (params.startWithChatbot || params.startChatbotOnReply) {
       await this.chatbotRepository.assignConversationOwner(conversation.id, null);
     } else if (params.ownerUserId !== undefined) {
       await this.chatbotRepository.assignConversationOwner(conversation.id, params.ownerUserId);
     }
 
+    return conversation;
+  }
+
+  private async sendInitialConversationPayload(params: {
+    conversationId: string;
+    firstMessage?: string;
+    startWithChatbot?: boolean;
+    startChatbotOnReply?: boolean;
+    agentName?: string | null;
+  }) {
     if (params.startWithChatbot) {
-      const openingMessage = `Olá 👋! Eu sou a ${agent?.name ?? "Marcia"}, consultora de Planos de Internet. Estou aqui para facilitar seu atendimento. Pode me informar o *CEP da instalação*?`;
+      const openingMessage = `Olá 👋! Eu sou a ${params.agentName ?? "Marcia"}, consultora de Planos de Internet. Estou aqui para facilitar seu atendimento. Pode me informar o *CEP da instalação*?`;
       await this.sendManualMessage({
-        conversationId: conversation.id,
+        conversationId: params.conversationId,
         content: openingMessage,
       });
-    } else if (params.firstMessage?.trim()) {
-      await this.sendManualMessage({
-        conversationId: conversation.id,
-        content: params.firstMessage.trim(),
-      });
-    } else {
-      await this.chatbotRepository.touchConversation(conversation.id);
+      return;
     }
 
-    return this.getDetail(conversation.id);
+    if (params.firstMessage?.trim()) {
+      await this.sendManualMessage({
+        conversationId: params.conversationId,
+        content: params.firstMessage.trim(),
+      });
+      return;
+    }
+
+    if (params.startChatbotOnReply) {
+      await this.chatbotRepository.touchConversation(params.conversationId);
+      return;
+    }
+
+    await this.chatbotRepository.touchConversation(params.conversationId);
   }
 
   async deleteConversation(conversationId: string, user?: Pick<User, "id" | "role">) {
@@ -332,6 +433,14 @@ function normalizeTag(tag: unknown): ConversationTag | null {
     label,
     color,
   };
+}
+
+function normalizePhone(phone: string) {
+  const normalizedPhone = phone.replace(/\D/g, "");
+  if (!normalizedPhone || normalizedPhone.length < 12) {
+    return "";
+  }
+  return normalizedPhone;
 }
 
 function agentConfig(agent?: {
