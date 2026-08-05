@@ -23,6 +23,14 @@ type SendOptionListInput = {
   config?: Partial<ZapiConfig>;
 };
 
+type SendButtonListInput = {
+  phone: string;
+  message: string;
+  buttons: Array<{ id: string; label: string }>;
+  delayTypingSeconds?: number;
+  config?: Partial<ZapiConfig>;
+};
+
 type ZapiConfig = Awaited<ReturnType<typeof getZapiRuntimeConfig>>;
 
 export class ZapiService {
@@ -94,6 +102,17 @@ export class ZapiService {
         buttonLabel,
         options,
       },
+      ...(delayTypingSeconds
+        ? { delayMessage: Math.min(15, Math.max(1, Math.round(delayTypingSeconds))) }
+        : {}),
+    }, config);
+  }
+
+  async sendButtonList({ phone, message, buttons, delayTypingSeconds, config }: SendButtonListInput) {
+    return this.post("send-button-list", {
+      phone,
+      message,
+      buttonList: { buttons },
       ...(delayTypingSeconds
         ? { delayMessage: Math.min(15, Math.max(1, Math.round(delayTypingSeconds))) }
         : {}),

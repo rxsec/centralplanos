@@ -175,6 +175,17 @@ export class ChatbotEngineService {
       return;
     }
 
+    if (input.next.buttonList) {
+      await this.zapiService.sendButtonList({
+        phone: input.phone,
+        message: input.next.reply,
+        buttons: input.next.buttonList.buttons,
+        delayTypingSeconds: input.delaySeconds,
+        config,
+      });
+      return;
+    }
+
     await this.zapiService.sendText({
       phone: input.phone,
       message: input.next.reply,
@@ -376,7 +387,7 @@ export class ChatbotEngineService {
         return {
           state: "ASK_DOCUMENT",
           memory,
-          reply: `${getFirstName(memory.name) || "Perfeito"} 😊 Fico no aguardo. Quando puder, me envie seu CPF ou CNPJ para seguirmos.`,
+          reply: `${getFirstName(memory.name) || "Perfeito"} 😊 Fico no aguardo. Quando puder, me envie seu CPF para seguirmos.`,
         };
       }
 
@@ -400,7 +411,7 @@ export class ChatbotEngineService {
         return {
           state: "ASK_DOCUMENT",
           memory,
-          reply: "Esse CPF ou CNPJ não parece válido. Pode conferir e me enviar novamente, por favor? 😊",
+          reply: "Esse CPF não parece válido. Pode conferir e me enviar novamente, por favor? 😊",
         };
       }
       memory.cpfCnpj = document.formatted;
@@ -530,7 +541,7 @@ export class ChatbotEngineService {
       return {
         state: "CHOOSE_PLAN",
         memory,
-        reply: "Show 🎉, agora chegou a melhor parte 🚀\n\nVou te passar os nossos melhores planos disponíveis na sua região.\n\n*LEMBRANDO QUE TODOS OS PLANOS POSSUEM GLOBOPLAY GRÁTIS*",
+        reply: "Show 🎉, agora chegou a melhor parte 🚀\nVou te passar os nossos melhores planos disponíveis na sua região. \n\n*LEMBRANDO  QUE TODOS OS PLANOS  POSSUI  GLOBOPLAY GRÁTIS*",
         optionList: buildPlanOptionList(plans),
       };
     }
@@ -571,7 +582,7 @@ export class ChatbotEngineService {
       return {
         state: "ASK_DOCUMENT",
         memory,
-        reply: "Perfeito 🎉! Agora me informe seu CPF para continuar.\n\nPode enviar com ou sem pontuação.\nExemplo: 000.000.000-00",
+        reply: "Perfeito 🎉! Agora me informe seu CPF para continuar.\n\nPode enviar com ou sem pontuação.\n\nExemplo: 000.000.000-00",
       };
     }
 
@@ -608,6 +619,7 @@ export class ChatbotEngineService {
         state: "CONFIRM_DATA",
         memory,
         reply: buildConfirmationMessage(memory),
+        buttonList: buildConfirmationButtonList(),
       };
     }
 
@@ -675,7 +687,7 @@ export class ChatbotEngineService {
           state: "FINISHED",
           memory,
           leadId: lead.id,
-          reply: "Perfeito! 🎉 Seus dados foram confirmados.\n\nVou cadastrar aqui, deixa o celular ligado 📱, porque aprovando você receberá uma ligação da nossa central. Você precisa confirmar as informações do seu plano contratado, tudo bem?\n\nObrigado por escolher a Claro! 🚀 Se precisar de qualquer coisa, é só me chamar!",
+          reply: "Perfeito! 🎉 Seus dados foram confirmados.\nVou cadastrar aqui, deixa o celular ligado 📱, porque aprovando você receberá uma ligação da nossa central. Você precisa confirmar as informações do seu plano contratado, tudo bem?\n\nObrigado por escolher a Claro! 🚀 Se precisar de qualquer coisa, é só me chamar!",
         };
       }
 
@@ -691,6 +703,7 @@ export class ChatbotEngineService {
         state: "CONFIRM_DATA",
         memory,
         reply: buildConfirmationMessage(memory),
+        buttonList: buildConfirmationButtonList(),
       };
     }
 
@@ -700,6 +713,7 @@ export class ChatbotEngineService {
         state: "CONFIRM_DATA",
         memory: corrected,
         reply: buildConfirmationMessage(corrected),
+        buttonList: buildConfirmationButtonList(),
       };
     }
 
@@ -773,7 +787,7 @@ export class ChatbotEngineService {
     return {
       state: "ASK_NAME",
       memory,
-      reply: `Boa notícia 🎉! Temos viabilidade no CEP ${formatCep(input.cep)}, localizado ${formatAddressShort(memory)}. Consigo te atender com a Claro 🚀. Para seguir com a contratação, preciso coletar alguns dados seus.\n\n*QUAL SEU NOME COMPLETO?*`,
+      reply: `Boa notícia 🎉! Temos viabilidade no CEP ${formatCep(input.cep)}, localizado ${formatAddressShort(memory)}. Consigo te atender com a Claro 🚀. \n\nPara seguir com a contratação, preciso coletar alguns dados seus.\n*QUAL SEU NOME    COMPLETO?*`,
     };
   }
 
@@ -788,7 +802,7 @@ export class ChatbotEngineService {
     return {
       state: "ASK_BILLING_DUE_DAY",
       memory,
-      reply: `Tenho que confessar, você escolheu um ótimo plano, ${input.plan.name} é um plano excelente!\n\nAgora escolha o melhor dia de vencimento da sua fatura.`,
+      reply: `Tenho que confessar, você escolheu um ótimo plano, ${input.plan.name}  é um plano excelente!\n\nAgora escolha o melhor dia de vencimento da sua fatura.`,
       optionList: buildBillingOptionList(),
     };
   }
@@ -985,6 +999,9 @@ type NextBotResponse = {
     title: string;
     buttonLabel: string;
     options: Array<{ id: string; title: string; description?: string }>;
+  };
+  buttonList?: {
+    buttons: Array<{ id: string; label: string }>;
   };
 };
 
@@ -1317,7 +1334,7 @@ function buildSummary(memory: ChatMemory) {
 }
 
 function buildConfirmationMessage(memory: ChatMemory) {
-  return `🎉 Informações registradas com sucesso!\n\nConfirma os dados que você me passou?\n\n${buildSummary(memory)}\n\nEstá tudo correto? ✅\n\nSim | Não`;
+  return `🎉 Informações registradas com sucesso!\nConfirma os dados que você me passou?\n${buildSummary(memory)}\n\nEstá tudo correto? ✅`;
 }
 
 function formatPlanList(plans: PlanCandidate[]) {
@@ -1328,24 +1345,32 @@ function formatPlanList(plans: PlanCandidate[]) {
 function buildPlanOptionList(plans: PlanCandidate[]) {
   return {
     title: "Ver planos",
-    buttonLabel: "Escolher plano",
+    buttonLabel: "Escolher Plano",
     options: plans.map((plan) => ({
       id: plan.id,
       title: plan.name,
-      description: `${plan.description ?? plan.speed} - ${formatMoney(Number(plan.price))}/mês`,
+      description: `${formatMoney(Number(plan.price))}/mês`,
     })),
   };
 }
 
 function buildBillingOptionList() {
   return {
-    title: "Escolher vencimento",
-    buttonLabel: "Ver datas",
+    title: "Escolher  dia de Vencimento",
+    buttonLabel: "Escolher  dia de Vencimento",
     options: VALID_BILLING_DAYS.map((day) => ({
       id: `billing-${day}`,
       title: `DIA ${day} do mês`,
-      description: `Vencimento no dia ${day}`,
     })),
+  };
+}
+
+function buildConfirmationButtonList() {
+  return {
+    buttons: [
+      { id: "confirm-sim", label: "Sim" },
+      { id: "confirm-nao", label: "Não" },
+    ],
   };
 }
 
@@ -1702,12 +1727,12 @@ function promptForState(state: string, firstName?: string) {
   const name = firstName ? `${firstName}, ` : "";
   const prompts: Record<string, string> = {
     ASK_CEP: "Para eu consultar a cobertura, me envie o CEP da instalação.",
-    ASK_NAME: "*QUAL SEU NOME COMPLETO?*",
+    ASK_NAME: "*QUAL SEU NOME    COMPLETO?*",
     ASK_DOCUMENT: "Perfeito 🎉! Agora me informe seu CPF para continuar.",
     ASK_BIRTH_DATE: "Agora me informe sua Data de nascimento? 🎂",
     ASK_STREET_NUMBER: `${name}agora, por favor, me informe o *NÚMERO DA SUA RESIDÊNCIA.*`,
     ASK_COMPLEMENT: `${name}a residência possui algum *COMPLEMENTO*?`,
-    ASK_BILLING_DUE_DAY: "Agora escolha o melhor dia de vencimento da sua fatura: 5, 8, 10, 15, 20 ou 25.",
+    ASK_BILLING_DUE_DAY: "Agora escolha o melhor dia de vencimento da sua fatura.",
     ASK_EMAIL: "Para finalizarmos, Agora me informe seu e-mail para eu finalizar seu cadastro. 📧",
     RECOMMEND_PLAN: "Vou te passar os nossos melhores planos disponíveis na sua região.",
     CHOOSE_PLAN: "Me diga qual plano você deseja contratar.",
