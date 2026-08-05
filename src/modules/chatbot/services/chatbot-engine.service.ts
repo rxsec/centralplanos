@@ -176,7 +176,7 @@ export class ChatbotEngineService {
       return {
         state: "ASK_CEP",
         memory: {},
-        reply: messageFor("START", `Olá 👋! Eu sou o ${input.agent?.name ?? "Cris"}, consultor da Claro. Estou aqui pra facilitar seu atendimento. Pode me informar o CEP da instalação?`),
+        reply: messageFor("START", `Ola 👋! Eu sou a ${input.agent?.name ?? "Marcia"}, consultora da Claro. Estou aqui para facilitar seu atendimento. Pode me informar o CEP da instalacao?`),
       };
     }
 
@@ -185,7 +185,7 @@ export class ChatbotEngineService {
       return {
         state: "HUMAN_HANDOFF",
         memory,
-        reply: "Combinado, vou sinalizar para um consultor humano continuar seu atendimento por aqui. 😊",
+        reply: "Combinado, vou sinalizar para uma consultora humana continuar seu atendimento por aqui. 😊",
       };
     }
 
@@ -257,7 +257,7 @@ export class ChatbotEngineService {
       return {
         state: "ASK_CEP",
         memory,
-        reply: messageFor("START", `Olá 👋! Eu sou o ${input.agent?.name ?? "Cris"}, consultor da Claro. Estou aqui pra facilitar seu atendimento. Pode me informar o CEP da instalação?`),
+        reply: messageFor("START", `Ola 👋! Eu sou a ${input.agent?.name ?? "Marcia"}, consultora da Claro. Estou aqui para facilitar seu atendimento. Pode me informar o CEP da instalacao?`),
       };
     }
 
@@ -652,7 +652,7 @@ export class ChatbotEngineService {
           planId: memory.planId,
           planName: memory.planName,
           expectedValue: memory.planValue,
-          notes: "Lead finalizado pelo fluxo do chatbot Cris.",
+          notes: "Lead finalizado pelo fluxo do chatbot Marcia.",
         });
 
         return {
@@ -706,7 +706,7 @@ export class ChatbotEngineService {
       return {
         state: "FINISHED",
         memory,
-        reply: answer || "Sigo por aqui como seu consultor da Claro. Se quiser, posso te ajudar com outra dúvida, retomar a contratação ou consultar outro endereço. 😊",
+        reply: answer || "Sigo por aqui como sua consultora da Claro. Se quiser, posso te ajudar com outra duvida, retomar a contratacao ou consultar outro endereco. 😊",
       };
     }
 
@@ -721,7 +721,7 @@ export class ChatbotEngineService {
     return {
       state: "ASK_CEP",
       memory: {},
-      reply: messageFor("START", `Olá 👋! Eu sou o ${input.agent?.name ?? "Cris"}, consultor da Claro. Estou aqui pra facilitar seu atendimento. Pode me informar o CEP da instalação?`),
+      reply: messageFor("START", `Ola 👋! Eu sou a ${input.agent?.name ?? "Marcia"}, consultora da Claro. Estou aqui para facilitar seu atendimento. Pode me informar o CEP da instalacao?`),
     };
   }
 
@@ -875,8 +875,8 @@ export class ChatbotEngineService {
 
       return await this.openAiService.answerCommercialQuestion(
         [
-          `Voce e ${input.agent?.name ?? "Cris"}, Consultor Comercial da Claro em um atendimento pelo WhatsApp.`,
-          `Personalidade: ${input.agent?.personality ?? "Vendedor humano, simpatico, persuasivo e objetivo."}`,
+          `Voce e ${input.agent?.name ?? "Marcia"}, Consultora Comercial da Claro em um atendimento pelo WhatsApp.`,
+          `Personalidade: ${input.agent?.personality ?? "Consultora humana, simpatica, persuasiva e objetiva."}`,
           `Regras personalizadas:\n${formatAgentRules(input.agent?.rules)}`,
           "Responda em portugues do Brasil, de forma breve, vendedora e natural.",
           "Nunca invente preco, cobertura ou plano. Use somente os planos listados.",
@@ -907,12 +907,12 @@ export class ChatbotEngineService {
 
       return await this.openAiService.answerCommercialQuestion(
         [
-          `Voce e ${input.agent?.name ?? "Cris"}, consultor comercial da Claro, falando com o cliente no WhatsApp.`,
-          `Personalidade: ${input.agent?.personality ?? "Consultor humano, persuasivo, divertido, cordial e objetivo."}`,
+          `Voce e ${input.agent?.name ?? "Marcia"}, consultora comercial da Claro, falando com a cliente no WhatsApp.`,
+          `Personalidade: ${input.agent?.personality ?? "Consultora humana, persuasiva, cordial e objetiva."}`,
           `Regras:\n${formatAgentRules(input.agent?.rules)}`,
           `O funil esta na etapa ${input.state}. Responda a mensagem do cliente, trate objecoes com postura comercial e depois retome exatamente para a etapa atual sem pular o fluxo.`,
           "Voce nunca pode dizer que e IA, robo, automacao ou assistente virtual.",
-          "Voce sempre fala como consultor da Claro.",
+          "Voce sempre fala como consultora da Claro.",
           "Se o cliente demonstrar objecao, falta de interesse, cancelamento ou desconfiança, tente reverter com argumento comercial leve, humano e seguro.",
           "Responda primeiro a pergunta real do cliente de forma util, natural e convincente. Nao desvie para lista de planos se isso nao foi pedido.",
           "So liste planos ou valores de forma organizada quando o cliente pedir opcoes, planos disponiveis, comparacao, velocidade ou preco.",
@@ -1676,14 +1676,14 @@ function callResumePrompt(
       flowMessage(
         agent?.flow,
         "START",
-        `Olá! Eu sou o ${agent?.name ?? "Cris"}, consultor comercial da Claro. Pode me informar o CEP da instalação?`,
+        `Ola! Eu sou a ${agent?.name ?? "Marcia"}, consultora comercial da Claro. Pode me informar o CEP da instalacao?`,
       ),
       memory,
       agent?.name,
     );
   }
   if (state === "FINISHED") return "Seu atendimento já está registrado. Se precisar, envie reiniciar para começar novamente.";
-  if (state === "HUMAN_HANDOFF") return "Seu atendimento está sinalizado para um consultor humano continuar por aqui.";
+  if (state === "HUMAN_HANDOFF") return "Seu atendimento esta sinalizado para uma consultora humana continuar por aqui.";
   return promptForState(state, getFirstName(memory.name));
 }
 
@@ -1789,7 +1789,7 @@ function toTitleCase(value: string) {
 
 function interpolate(template: string, memory: ChatMemory, agentName?: string) {
   return template
-    .replaceAll("{{agente}}", agentName || "Cris")
+    .replaceAll("{{agente}}", agentName || "Marcia")
     .replaceAll("{{nome}}", getFirstName(memory.name) || "cliente")
     .replaceAll("{{cep}}", formatCep(memory.cep))
     .replaceAll("{{endereco}}", formatFullAddress(memory));

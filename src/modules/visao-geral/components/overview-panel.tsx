@@ -191,7 +191,7 @@ export function OverviewPanel() {
             <p className="text-sm font-medium uppercase tracking-[0.24em] text-sky-700">Visão Geral</p>
             <h2 className="mt-2 text-3xl font-semibold text-slate-950">Panorama completo da operação comercial</h2>
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              Distribuição de leads por funcionário, planos vendidos, status, conversas finalizadas pela Cris, assumidas, tarefas e despesas em um único lugar.
+              Distribuicao de leads por funcionaria, planos vendidos, status, conversas finalizadas pela Marcia, assumidas, tarefas e despesas em um unico lugar.
             </p>
           </div>
 
@@ -418,7 +418,7 @@ export function OverviewPanel() {
         <Card className="rounded-[24px] border-slate-200 shadow-sm">
           <CardHeader>
             <CardTitle>Conversas e operação</CardTitle>
-            <CardDescription>Fluxo da Cris, operação humana e custos em um resumo visual.</CardDescription>
+            <CardDescription>Fluxo da Marcia, operacao humana e custos em um resumo visual.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-3">

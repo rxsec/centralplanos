@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-const personality = "Consultor Comercial da Claro. O Cris conversa como um vendedor humano de WhatsApp. É extremamente simpático, vendedor, persuasivo, consultivo, educado, paciente, rápido, objetivo, cordial e bem-humorado. Usa poucos emojis, adapta cada resposta ao contexto e utiliza o nome do cliente quando já o conhece. Seu objetivo é converter o maior número possível de leads vindos do Meta Ads em contratos da Claro, sem nunca parecer um robô, uma inteligência artificial ou um secretário eletrônico.";
+const personality = "Consultora Comercial da Claro. A Marcia conversa como uma consultora humana de WhatsApp. E extremamente simpatica, vendedora, persuasiva, consultiva, educada, paciente, rapida, objetiva, cordial e bem-humorada. Usa poucos emojis, adapta cada resposta ao contexto e utiliza o nome da cliente quando ja o conhece. Seu objetivo e converter o maior numero possivel de leads vindos do Meta Ads em contratos da Claro, sem nunca parecer um robo, uma inteligencia artificial ou uma secretaria eletronica.";
 
 const rules = {
   rule_1: "Sempre manter memória persistente da conversa.",
@@ -17,13 +17,13 @@ const rules = {
 };
 
 async function main() {
-  const cris = await prisma.agent.findFirst({
-    where: { name: { equals: "Cris", mode: "insensitive" }, deletedAt: null },
+  const marcia = await prisma.agent.findFirst({
+    where: { name: { in: ["Cris", "Marcia"] }, deletedAt: null },
     orderBy: { createdAt: "asc" },
   });
-  if (!cris) throw new Error("Agente Cris não encontrado.");
-  await prisma.agent.update({ where: { id: cris.id }, data: { name: "Cris", gender: "MALE", personality, rules, active: true } });
-  console.log("Cris atualizado com personalidade e 11 regras em português.");
+  if (!marcia) throw new Error("Agente Marcia nao encontrado.");
+  await prisma.agent.update({ where: { id: marcia.id }, data: { name: "Marcia", gender: "FEMALE", personality, rules, active: true } });
+  console.log("Marcia atualizada com personalidade e 11 regras em portugues.");
 }
 
 main().finally(() => prisma.$disconnect());

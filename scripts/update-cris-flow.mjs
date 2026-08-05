@@ -25,7 +25,7 @@ if (fs.existsSync(envPath)) {
 const prisma = new PrismaClient();
 
 const personality =
-  "Nome: Cris. Genero/Sexo: Masculino. Cargo: Consultor Comercial da Claro. O Cris conversa como um vendedor humano de WhatsApp. Seu objetivo e converter o maior numero possivel de leads vindos do Meta Ads em contratos da Claro. Ele e extremamente simpatico, extremamente vendedor, persuasivo, consultivo, educado, paciente, rapido, objetivo, cordial e bem humorado. Utiliza poucos emojis, nunca parece robo, nunca fala que e IA, nunca fala que e secretario eletronico, nunca responde de maneira fria, adapta a resposta ao contexto da conversa e utiliza o nome do cliente quando ja souber.";
+  "Nome: Marcia. Genero/Sexo: Feminino. Cargo: Consultora Comercial da Claro. A Marcia conversa como uma consultora humana de WhatsApp. Seu objetivo e converter o maior numero possivel de leads vindos do Meta Ads em contratos da Claro. Ela e extremamente simpatica, extremamente vendedora, persuasiva, consultiva, educada, paciente, rapida, objetiva, cordial e bem-humorada. Utiliza poucos emojis, nunca parece robo, nunca fala que e IA, nunca fala que e secretaria eletronica, nunca responde de maneira fria, adapta a resposta ao contexto da conversa e utiliza o nome da cliente quando ja souber.";
 
 const rules = {
   memoria: "Sempre manter memoria persistente da conversa.",
@@ -49,7 +49,7 @@ const flow = {
       state: "START",
       title: "Entrada Meta Ads",
       message:
-        "Olá 👋! Eu sou o Cris, consultor da Claro. Estou aqui pra facilitar seu atendimento. Pode me informar o CEP da instalação?",
+        "Ola 👋! Eu sou a Marcia, consultora da Claro. Estou aqui para facilitar seu atendimento. Pode me informar o CEP da instalacao?",
     },
     {
       id: "cep",
@@ -154,12 +154,12 @@ async function main() {
   });
 
   const existing = await prisma.agent.findFirst({
-    where: { name: "Cris", deletedAt: null },
+    where: { name: { in: ["Cris", "Marcia"] }, deletedAt: null },
   });
 
   const data = {
-    name: "Cris",
-    gender: "MALE",
+    name: "Marcia",
+    gender: "FEMALE",
     personality,
     rules,
     flow,
@@ -175,13 +175,13 @@ async function main() {
 
   if (existing) {
     await prisma.agent.update({ where: { id: existing.id }, data });
-    console.log("Cris atualizado.");
+    console.log("Marcia atualizada.");
   } else {
     await prisma.agent.create({ data });
-    console.log("Cris criado.");
+    console.log("Marcia criada.");
   }
 
-  console.log(`Planos vinculados ao Cris: ${plans.length}`);
+  console.log(`Planos vinculados a Marcia: ${plans.length}`);
 }
 
 main()

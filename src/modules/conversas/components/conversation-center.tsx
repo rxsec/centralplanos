@@ -412,7 +412,7 @@ export function ConversationCenter() {
         <CardHeader className="flex flex-row items-center justify-between gap-4">
           <div>
             <CardTitle>Central de Conversas</CardTitle>
-            <CardDescription>Inbox em tempo real do WhatsApp da Cris com controle humano.</CardDescription>
+            <CardDescription>Inbox em tempo real do WhatsApp da Marcia com controle humano.</CardDescription>
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <span className={`h-2.5 w-2.5 rounded-full ${isRealtimeConnected ? "bg-emerald-500" : "bg-orange-500"}`} />
@@ -472,7 +472,7 @@ export function ConversationCenter() {
                   <p className="mt-2 line-clamp-2 text-xs text-muted-foreground">{conversation.lastMessage?.body ?? "Sem mensagens ainda"}</p>
                   <div className="mt-3 flex flex-wrap gap-2 text-[11px]">
                     <span className={`rounded-full px-2 py-1 ${conversation.botActive ? "bg-emerald-100 text-emerald-700" : "bg-orange-100 text-orange-700"}`}>
-                      {conversation.botActive ? "Cris ativa" : "Assumida"}
+                      {conversation.botActive ? "Marcia ativa" : "Assumida"}
                     </span>
                     <span className="rounded-full bg-muted px-2 py-1">{conversation.state}</span>
                     {conversation.tags.map((tag) => (
@@ -504,7 +504,7 @@ export function ConversationCenter() {
                   <div>
                     <CardTitle>{detail.lead?.name ?? detail.phone}</CardTitle>
                     <CardDescription>
-                      {detail.phone} • Etapa atual: {detail.state} • {detail.agent?.name ?? "Cris"}
+                      {detail.phone} • Etapa atual: {detail.state} • {detail.agent?.name ?? "Marcia"}
                     </CardDescription>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -643,7 +643,7 @@ export function ConversationCenter() {
 
                 <div className="flex flex-col gap-3 border-t pt-4">
                   <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                    <span>{detail.botActive ? "Cris pode responder nesta conversa." : "Somente operador responde nesta conversa."}</span>
+                    <span>{detail.botActive ? "Marcia pode responder nesta conversa." : "Somente a operadora responde nesta conversa."}</span>
                     <span>•</span>
                     <span>{currentUser?.role === "ADMIN" ? "Administradores visualizam todas as conversas." : "Você visualiza apenas as conversas atribuídas a você."}</span>
                   </div>
