@@ -334,6 +334,13 @@ export class ConversationService {
 
     if (params.startWithChatbot || params.startChatbotOnReply) {
       await this.chatbotRepository.assignConversationOwner(conversation.id, null);
+      await this.chatbotRepository.updateConversation({
+        id: conversation.id,
+        state: "START",
+        memory: {} as Prisma.InputJsonValue,
+        leadId: undefined,
+        ownerUserId: null,
+      });
     } else if (params.ownerUserId !== undefined) {
       await this.chatbotRepository.assignConversationOwner(conversation.id, params.ownerUserId);
     }
