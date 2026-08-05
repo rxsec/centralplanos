@@ -541,7 +541,7 @@ export class ChatbotEngineService {
       return {
         state: "CHOOSE_PLAN",
         memory,
-        reply: "Show 🎉, agora chegou a melhor parte 🚀\nVou te passar os nossos melhores planos disponíveis na sua região. \n\n*LEMBRANDO  QUE TODOS OS PLANOS  POSSUI  GLOBOPLAY GRÁTIS*",
+        reply: "Show 🎉, agora chegou a melhor parte 🚀\nVou te passar os nossos melhores planos disponíveis na sua região. \n\n*LEMBRANDO  QUE TODOS OS PLANOS  POSSUI  GLOBOPLAY GRÁTIS*\n\nSe a lista não abrir, pode me responder com o nome do plano.",
         optionList: buildPlanOptionList(plans),
       };
     }
@@ -637,7 +637,7 @@ export class ChatbotEngineService {
       return {
         state: "CHOOSE_PLAN",
         memory,
-        reply: "Claro! 😊 Estas são as opções disponíveis:",
+        reply: "Claro! 😊 Estas são as opções disponíveis:\n\nSe a lista não abrir, pode me responder com o nome do plano.",
         optionList: buildPlanOptionList(plans),
       };
     }
@@ -653,7 +653,7 @@ export class ChatbotEngineService {
         return {
           state: "CHOOSE_PLAN",
           memory,
-          reply: "Claro! 😊 Estas são as opções disponíveis:",
+          reply: "Claro! 😊 Estas são as opções disponíveis:\n\nSe a lista não abrir, pode me responder com o nome do plano.",
           optionList: buildPlanOptionList(plans),
         };
       }
@@ -784,10 +784,10 @@ export class ChatbotEngineService {
       };
     }
 
-    return {
-      state: "ASK_NAME",
+      return {
+        state: "ASK_NAME",
       memory,
-      reply: `Boa notícia 🎉! Temos viabilidade no CEP ${formatCep(input.cep)}, localizado ${formatAddressShort(memory)}. Consigo te atender com a Claro 🚀. \n\nPara seguir com a contratação, preciso coletar alguns dados seus.\n\n*ME  INFORME SEU NOME    COMPLETO**`,
+      reply: `Boa notícia 🎉! Temos viabilidade no CEP ${formatCep(input.cep)}, localizado ${formatAddressShort(memory)}. Consigo te atender com a Claro 🚀. \n\nPara seguir com a contratação, preciso coletar alguns dados seus.\n\n*ME  INFORME SEU NOME COMPLETO*`,
     };
   }
 
@@ -1735,7 +1735,7 @@ function promptForState(state: string, firstName?: string) {
   const name = firstName ? `${firstName}, ` : "";
   const prompts: Record<string, string> = {
     ASK_CEP: "Para eu consultar a cobertura, me envie o CEP da instalação.",
-    ASK_NAME: "*ME  INFORME SEU NOME    COMPLETO**",
+    ASK_NAME: "*ME  INFORME SEU NOME COMPLETO*",
     ASK_DOCUMENT: "Perfeito 🎉! Agora me informe seu CPF para continuar.",
     ASK_BIRTH_DATE: "Agora me informe sua Data de nascimento? 🎂",
     ASK_STREET_NUMBER: `${name}agora, por favor, me informe o *NÚMERO DA SUA RESIDÊNCIA.*`,

@@ -26,21 +26,27 @@ type ZapiWebhookPayload = {
     body?: string;
     conversation?: string;
     content?: string;
+    selectedId?: string;
+    selectedDisplayText?: string;
     extendedTextMessage?: {
       text?: string;
       body?: string;
       selectedDisplayText?: string;
+      selectedId?: string;
     };
   };
   text?: {
     message?: string;
     body?: string;
     content?: string;
+    selectedId?: string;
+    selectedDisplayText?: string;
   };
   extendedTextMessage?: {
     text?: string;
     body?: string;
     selectedDisplayText?: string;
+    selectedId?: string;
   };
   image?: { mimeType?: string; imageUrl?: string; caption?: string; downloadError?: string | null };
   document?: { documentUrl?: string; mimeType?: string; fileName?: string; pageCount?: number };
@@ -123,18 +129,26 @@ async function extractIncomingMessage(payload: ZapiWebhookPayload) {
     payload.text?.message ??
     payload.text?.body ??
     payload.text?.content ??
+    payload.text?.selectedDisplayText ??
+    payload.text?.selectedId ??
     payload.message?.text ??
     payload.message?.body ??
     payload.message?.conversation ??
     payload.message?.content ??
+    payload.message?.selectedDisplayText ??
+    payload.message?.selectedId ??
     payload.message?.extendedTextMessage?.text ??
     payload.message?.extendedTextMessage?.body ??
     payload.message?.extendedTextMessage?.selectedDisplayText ??
+    payload.message?.extendedTextMessage?.selectedId ??
     payload.extendedTextMessage?.text ??
     payload.extendedTextMessage?.body ??
     payload.extendedTextMessage?.selectedDisplayText ??
+    payload.extendedTextMessage?.selectedId ??
+    findInteractiveSelection(payload) ??
     findNestedMessageText(payload.message) ??
     findNestedMessageText(payload.text) ??
+    findNestedMessageText(payload) ??
     payload.body ??
     ""
   ).trim();
@@ -192,10 +206,75 @@ function findNestedMessageText(value: unknown, depth = 0): string | undefined {
   if (typeof value !== "object") return undefined;
 
   const record = value as Record<string, unknown>;
-  const preferredKeys = ["message", "body", "text", "content", "conversation", "selectedDisplayText"];
+  const preferredKeys = [
+    "selectedDisplayText",
+    "selectedId",
+    "displayText",
+    "title",
+    "description",
+    "label",
+    "message",
+    "body",
+    "text",
+    "content",
+    "conversation",
+    "rowId",
+    "id",
+  ];
 
   for (const key of preferredKeys) {
     const nested = findNestedMessageText(record[key], depth + 1);
+    if (nested) return nested;
+  }
+
+  return undefined;
+}
+
+function findInteractiveSelection(payload: ZapiWebhookPayload) {
+  const candidates = [
+    payload as unknown,
+    payload.message,
+    payload.text,
+    payload.extendedTextMessage,
+  ];
+
+  for (const candidate of candidates) {
+    const selection = findSelectionInRecord(candidate);
+    if (selection) return selection;
+  }
+
+  return undefined;
+}
+
+function findSelectionInRecord(value: unknown, depth = 0): string | undefined {
+  if (!value || depth > 4 || typeof value !== "object") return undefined;
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const nested = findSelectionInRecord(item, depth + 1);
+      if (nested) return nested;
+    }
+    return undefined;
+  }
+
+  const record = value as Record<string, unknown>;
+  const directKeys = [
+    "selectedDisplayText",
+    "selectedId",
+    "displayText",
+    "buttonText",
+    "title",
+    "rowTitle",
+    "rowId",
+    "id",
+  ];
+
+  for (const key of directKeys) {
+    const value = record[key];
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+
+  for (const nestedValue of Object.values(record)) {
+    const nested = findSelectionInRecord(nestedValue, depth + 1);
     if (nested) return nested;
   }
 
