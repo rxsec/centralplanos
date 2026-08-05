@@ -81,10 +81,55 @@ async function main() {
   });
 
   const plans = [
-    { name: "Central Start", speed: "300 Mega", price: 99.9, order: 1 },
-    { name: "Central Plus", speed: "500 Mega", price: 119.9, order: 2 },
-    { name: "Central Ultra", speed: "700 Mega", price: 149.9, order: 3 },
+    {
+      name: "Plano 500Mb",
+      speed: "500 Mega",
+      price: 99.9,
+      description: "Plano 500Mb + Globoplay (GRÁTIS)",
+      order: 1,
+    },
+    {
+      name: "Plano 250 Mega + Chip",
+      speed: "250 Mega + Chip",
+      price: 119.8,
+      description: "Plano 250 Mega + Chip + Globoplay (GRÁTIS)",
+      order: 2,
+    },
+    {
+      name: "Plano 600 Mega + Chip",
+      speed: "600 Mega + Chip",
+      price: 139.8,
+      description: "Plano 600 Mega + Chip + Globoplay (GRÁTIS)",
+      order: 3,
+    },
+    {
+      name: "Plano 1Gb + Chip",
+      speed: "1 Gb + Chip",
+      price: 189.8,
+      description: "Plano 1Gb + Chip + Globoplay (GRÁTIS)",
+      order: 4,
+    },
+    {
+      name: "Plano 1Gb",
+      speed: "1 Gb",
+      price: 199.9,
+      description: "Plano 1Gb + Globoplay (GRÁTIS)",
+      order: 5,
+    },
   ];
+
+  await prisma.plan.updateMany({
+    where: {
+      deletedAt: null,
+      name: {
+        notIn: plans.map((plan) => plan.name),
+      },
+    },
+    data: {
+      active: false,
+      deletedAt: new Date(),
+    },
+  });
 
   for (const plan of plans) {
     const existing = await prisma.plan.findFirst({
@@ -95,12 +140,33 @@ async function main() {
       await prisma.plan.create({
         data: {
           ...plan,
-          description: "Plano inicial cadastrado para operação comercial.",
           active: true,
+        },
+      });
+    } else {
+      await prisma.plan.update({
+        where: { id: existing.id },
+        data: {
+          ...plan,
+          active: true,
+          deletedAt: null,
         },
       });
     }
   }
+
+  const activePlans = await prisma.plan.findMany({
+    where: { deletedAt: null, active: true },
+    orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+    select: { id: true },
+  });
+
+  await prisma.agent.update({
+    where: { id: "00000000-0000-0000-0000-000000000001" },
+    data: {
+      plans: { set: activePlans.map((plan) => ({ id: plan.id })) },
+    },
+  });
 
   await prisma.appSetting.upsert({
     where: { key: "expenses" },
