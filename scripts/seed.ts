@@ -2,6 +2,14 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
 
 async function main() {
+  const zapiBaseUrl = process.env.ZAPI_BASE_URL ?? "https://api.z-api.io";
+  const zapiInstanceId = process.env.ZAPI_INSTANCE_ID ?? "";
+  const zapiToken = process.env.ZAPI_TOKEN ?? "";
+  const zapiClientToken = process.env.ZAPI_CLIENT_TOKEN ?? "";
+  const zapiWhatsappNumber = process.env.ZAPI_WHATSAPP_NUMBER ?? "";
+  const openAiApiKey = process.env.OPENAI_API_KEY ?? "";
+  const openAiModel = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
+
   await prisma.agent.upsert({
     where: { id: "00000000-0000-0000-0000-000000000001" },
     create: {
@@ -31,7 +39,12 @@ async function main() {
       enableReadReceipt: true,
       enableTyping: true,
       enableReplyDelay: true,
-      openAiModel: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
+      openAiModel,
+      zapiBaseUrl,
+      zapiInstanceId,
+      zapiToken,
+      zapiClientToken,
+      zapiWhatsappNumber,
     },
     update: {
       name: "Marcia",
@@ -54,7 +67,12 @@ async function main() {
       active: true,
       minTypingSeconds: 2,
       maxTypingSeconds: 4,
-      openAiModel: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
+      openAiModel,
+      zapiBaseUrl,
+      zapiInstanceId,
+      zapiToken,
+      zapiClientToken,
+      zapiWhatsappNumber,
     },
   });
 
@@ -85,6 +103,24 @@ async function main() {
     create: { key: "expenses", value: 0 },
     update: {},
   });
+
+  const integrationSettings = [
+    { key: "openAiApiKey", value: openAiApiKey },
+    { key: "openAiModel", value: openAiModel },
+    { key: "zapiBaseUrl", value: zapiBaseUrl },
+    { key: "zapiInstanceId", value: zapiInstanceId },
+    { key: "zapiToken", value: zapiToken },
+    { key: "zapiClientToken", value: zapiClientToken },
+    { key: "zapiWhatsappNumber", value: zapiWhatsappNumber },
+  ];
+
+  for (const setting of integrationSettings) {
+    await prisma.appSetting.upsert({
+      where: { key: setting.key },
+      create: setting,
+      update: { value: setting.value },
+    });
+  }
 
   const adminEmail = process.env.ADMIN_INITIAL_EMAIL ?? "admin@centraldosplanos.com";
   const adminPassword = process.env.ADMIN_INITIAL_PASSWORD ?? "acesso@2026";
