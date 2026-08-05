@@ -14,6 +14,7 @@ export async function POST(request: Request) {
       phone: String(body.phone ?? ""),
       leadName: body.leadName ? String(body.leadName) : undefined,
       firstMessage: body.firstMessage ? String(body.firstMessage) : undefined,
+      startWithChatbot: Boolean(body.startWithChatbot),
       ownerUserId: body.ownerUserId ? String(body.ownerUserId) : user.id,
     });
 

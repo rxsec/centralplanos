@@ -96,7 +96,13 @@ export function ConversationCenter() {
   const [isSending, setIsSending] = useState(false);
   const [isSavingTags, setIsSavingTags] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [createForm, setCreateForm] = useState({ phone: "", leadName: "", firstMessage: "", ownerUserId: "" });
+  const [createForm, setCreateForm] = useState({
+    phone: "",
+    leadName: "",
+    firstMessage: "",
+    ownerUserId: "",
+    startWithChatbot: false,
+  });
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [isRealtimeConnected, setIsRealtimeConnected] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -332,8 +338,9 @@ export function ConversationCenter() {
       body: JSON.stringify({
         phone: createForm.phone,
         leadName: createForm.leadName,
-        firstMessage: createForm.firstMessage,
-        ownerUserId: createForm.ownerUserId || currentUser?.id,
+        firstMessage: createForm.startWithChatbot ? "" : createForm.firstMessage,
+        startWithChatbot: createForm.startWithChatbot,
+        ownerUserId: createForm.startWithChatbot ? null : (createForm.ownerUserId || currentUser?.id),
       }),
     });
     const result = await response.json();
@@ -341,7 +348,7 @@ export function ConversationCenter() {
 
     if (result.status === "success" && result.data?.id) {
       setIsCreateOpen(false);
-      setCreateForm({ phone: "", leadName: "", firstMessage: "", ownerUserId: "" });
+      setCreateForm({ phone: "", leadName: "", firstMessage: "", ownerUserId: "", startWithChatbot: false });
       await loadConversations({ preferredId: result.data.id, reset: true });
     }
   }
@@ -679,15 +686,36 @@ export function ConversationCenter() {
           <div className="space-y-4">
             <Input placeholder="Nome do contato" value={createForm.leadName} onChange={(event) => setCreateForm((current) => ({ ...current, leadName: event.target.value }))} />
             <Input placeholder="WhatsApp com DDI e DDD" value={createForm.phone} onChange={(event) => setCreateForm((current) => ({ ...current, phone: event.target.value }))} />
+            <label className="flex items-start gap-3 rounded-md border p-3 text-sm">
+              <input
+                type="checkbox"
+                className="mt-1 h-4 w-4"
+                checked={createForm.startWithChatbot}
+                onChange={(event) => setCreateForm((current) => ({
+                  ...current,
+                  startWithChatbot: event.target.checked,
+                  firstMessage: event.target.checked ? "" : current.firstMessage,
+                }))}
+              />
+              <div>
+                <p className="font-medium">Iniciar com a Marcia</p>
+                <p className="text-muted-foreground">Envia automaticamente a primeira mensagem do fluxo e deixa o chatbot ativo nessa conversa.</p>
+              </div>
+            </label>
             <select className="h-10 w-full rounded-md border bg-background px-3 text-sm" value={createForm.ownerUserId} onChange={(event) => setCreateForm((current) => ({ ...current, ownerUserId: event.target.value }))}>
-              <option value="">Assumir comigo</option>
+              <option value="">{createForm.startWithChatbot ? "Sem responsável humano" : "Assumir comigo"}</option>
               {(payload?.users ?? []).map((user) => (
                 <option key={user.id} value={user.id}>
                   {user.name}
                 </option>
               ))}
             </select>
-            <Textarea placeholder="Primeira mensagem opcional..." value={createForm.firstMessage} onChange={(event) => setCreateForm((current) => ({ ...current, firstMessage: event.target.value }))} />
+            <Textarea
+              placeholder={createForm.startWithChatbot ? "A primeira mensagem automática da Marcia será enviada ao iniciar." : "Primeira mensagem opcional..."}
+              value={createForm.firstMessage}
+              disabled={createForm.startWithChatbot}
+              onChange={(event) => setCreateForm((current) => ({ ...current, firstMessage: event.target.value }))}
+            />
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>Cancelar</Button>
               <Button type="button" onClick={() => void startConversation()}>Iniciar conversa</Button>

@@ -233,7 +233,13 @@ export class ConversationService {
     return this.getDetail(conversation.id, params.user);
   }
 
-  async startConversation(params: { phone: string; ownerUserId?: string | null; leadName?: string; firstMessage?: string }) {
+  async startConversation(params: {
+    phone: string;
+    ownerUserId?: string | null;
+    leadName?: string;
+    firstMessage?: string;
+    startWithChatbot?: boolean;
+  }) {
     const normalizedPhone = params.phone.replace(/\D/g, "");
     if (!normalizedPhone || normalizedPhone.length < 12) {
       throw new Error("Informe um WhatsApp com DDD e DDI 55.");
@@ -242,11 +248,19 @@ export class ConversationService {
     const agent = await this.chatbotRepository.getDefaultAgent();
     const conversation = await this.chatbotRepository.findOrCreateConversation(normalizedPhone, agent?.id);
 
-    if (params.ownerUserId !== undefined) {
+    if (params.startWithChatbot) {
+      await this.chatbotRepository.assignConversationOwner(conversation.id, null);
+    } else if (params.ownerUserId !== undefined) {
       await this.chatbotRepository.assignConversationOwner(conversation.id, params.ownerUserId);
     }
 
-    if (params.firstMessage?.trim()) {
+    if (params.startWithChatbot) {
+      const openingMessage = `Olá 👋! Eu sou a ${agent?.name ?? "Marcia"}, consultora de Planos de Internet. Estou aqui para facilitar seu atendimento. Pode me informar o *CEP da instalação*?`;
+      await this.sendManualMessage({
+        conversationId: conversation.id,
+        content: openingMessage,
+      });
+    } else if (params.firstMessage?.trim()) {
       await this.sendManualMessage({
         conversationId: conversation.id,
         content: params.firstMessage.trim(),
