@@ -133,11 +133,11 @@ export class ChatbotEngineService {
     const typingEnabled =
       (agent?.enableReplyDelay ?? true) && (agent?.enableTyping ?? true);
 
-    await this.zapiService.sendText({
+    await this.sendOutboundMessage({
       phone,
-      message: next.reply,
-      delayTypingSeconds: typingEnabled ? delaySeconds : undefined,
-      config: agentConfig(agent),
+      next,
+      agent,
+      delaySeconds: typingEnabled ? delaySeconds : undefined,
     });
     await this.chatbotRepository.saveMessage({
       conversationId: conversation.id,
@@ -152,6 +152,35 @@ export class ChatbotEngineService {
     });
 
     return { state: next.state, replied: true, delayMs: typingEnabled ? delaySeconds * 1000 : 0 };
+  }
+
+  private async sendOutboundMessage(input: {
+    phone: string;
+    next: NextBotResponse;
+    agent: Awaited<ReturnType<ChatbotRepository["getAgentByInstance"]>>;
+    delaySeconds?: number;
+  }) {
+    const config = agentConfig(input.agent);
+
+    if (input.next.optionList) {
+      await this.zapiService.sendOptionList({
+        phone: input.phone,
+        message: input.next.reply,
+        title: input.next.optionList.title,
+        buttonLabel: input.next.optionList.buttonLabel,
+        options: input.next.optionList.options,
+        delayTypingSeconds: input.delaySeconds,
+        config,
+      });
+      return;
+    }
+
+    await this.zapiService.sendText({
+      phone: input.phone,
+      message: input.next.reply,
+      delayTypingSeconds: input.delaySeconds,
+      config,
+    });
   }
 
   private async nextResponse(input: {
@@ -501,7 +530,8 @@ export class ChatbotEngineService {
       return {
         state: "CHOOSE_PLAN",
         memory,
-        reply: `Show 🎉, agora chegou a melhor parte 🚀\n\nVou te passar os nossos melhores planos disponíveis na sua região.\n\n*LEMBRANDO QUE TODOS OS PLANOS POSSUEM GLOBOPLAY GRÁTIS*\n\n${formatPlanList(plans)}\n\n*Escolher Plano*`,
+        reply: "Show 🎉, agora chegou a melhor parte 🚀\n\nVou te passar os nossos melhores planos disponíveis na sua região.\n\n*LEMBRANDO QUE TODOS OS PLANOS POSSUEM GLOBOPLAY GRÁTIS*",
+        optionList: buildPlanOptionList(plans),
       };
     }
 
@@ -595,7 +625,8 @@ export class ChatbotEngineService {
       return {
         state: "CHOOSE_PLAN",
         memory,
-        reply: `Claro! 😊 Estas são as opções disponíveis:\n\n${formatPlanList(plans)}\n\n*Escolher Plano*`,
+        reply: "Claro! 😊 Estas são as opções disponíveis:",
+        optionList: buildPlanOptionList(plans),
       };
     }
 
@@ -610,7 +641,8 @@ export class ChatbotEngineService {
         return {
           state: "CHOOSE_PLAN",
           memory,
-          reply: `Claro! 😊 Estas são as opções disponíveis:\n\n${formatPlanList(plans)}\n\nMe diga qual plano você deseja contratar.`,
+          reply: "Claro! 😊 Estas são as opções disponíveis:",
+          optionList: buildPlanOptionList(plans),
         };
       }
 
@@ -756,7 +788,8 @@ export class ChatbotEngineService {
     return {
       state: "ASK_BILLING_DUE_DAY",
       memory,
-      reply: `Tenho que confessar, você escolheu um ótimo plano, ${input.plan.name} é um plano excelente!\n\nAgora escolha o melhor dia de vencimento da sua fatura.\n\nDIA 5 do mês\nDIA 8 do mês\nDIA 10 do mês\nDIA 15 do mês\nDIA 20 do mês\nDIA 25 do mês`,
+      reply: `Tenho que confessar, você escolheu um ótimo plano, ${input.plan.name} é um plano excelente!\n\nAgora escolha o melhor dia de vencimento da sua fatura.`,
+      optionList: buildBillingOptionList(),
     };
   }
 
@@ -948,6 +981,11 @@ type NextBotResponse = {
   memory: ChatMemory;
   reply: string;
   leadId?: string;
+  optionList?: {
+    title: string;
+    buttonLabel: string;
+    options: Array<{ id: string; title: string; description?: string }>;
+  };
 };
 
 type ChatMemory = {
@@ -1285,6 +1323,30 @@ function buildConfirmationMessage(memory: ChatMemory) {
 function formatPlanList(plans: PlanCandidate[]) {
   if (!plans.length) return "No momento não há planos ativos cadastrados.";
   return plans.map((plan) => `${plan.name} → ${formatMoney(Number(plan.price))}/mês`).join("\n");
+}
+
+function buildPlanOptionList(plans: PlanCandidate[]) {
+  return {
+    title: "Ver planos",
+    buttonLabel: "Escolher plano",
+    options: plans.map((plan) => ({
+      id: plan.id,
+      title: plan.name,
+      description: `${plan.description ?? plan.speed} - ${formatMoney(Number(plan.price))}/mês`,
+    })),
+  };
+}
+
+function buildBillingOptionList() {
+  return {
+    title: "Escolher vencimento",
+    buttonLabel: "Ver datas",
+    options: VALID_BILLING_DAYS.map((day) => ({
+      id: `billing-${day}`,
+      title: `DIA ${day} do mês`,
+      description: `Vencimento no dia ${day}`,
+    })),
+  };
 }
 
 function findRecommendedPlan(plans: PlanCandidate[]) {

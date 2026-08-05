@@ -13,6 +13,16 @@ type SendMediaInput = {
   config?: Partial<ZapiConfig>;
 };
 
+type SendOptionListInput = {
+  phone: string;
+  message: string;
+  title: string;
+  buttonLabel: string;
+  options: Array<{ id: string; title: string; description?: string }>;
+  delayTypingSeconds?: number;
+  config?: Partial<ZapiConfig>;
+};
+
 type ZapiConfig = Awaited<ReturnType<typeof getZapiRuntimeConfig>>;
 
 export class ZapiService {
@@ -73,6 +83,21 @@ export class ZapiService {
     }
 
     throw new Error("Falha ao enviar mensagem pela Z-API.");
+  }
+
+  async sendOptionList({ phone, message, title, buttonLabel, options, delayTypingSeconds, config }: SendOptionListInput) {
+    return this.post("send-option-list", {
+      phone,
+      message,
+      optionList: {
+        title,
+        buttonLabel,
+        options,
+      },
+      ...(delayTypingSeconds
+        ? { delayMessage: Math.min(15, Math.max(1, Math.round(delayTypingSeconds))) }
+        : {}),
+    }, config);
   }
 
   async sendImage({ phone, image, caption, config }: SendMediaInput & { image: string; caption?: string }) {
