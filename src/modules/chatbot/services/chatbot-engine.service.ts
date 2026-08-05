@@ -787,7 +787,7 @@ export class ChatbotEngineService {
     return {
       state: "ASK_NAME",
       memory,
-      reply: `Boa notícia 🎉! Temos viabilidade no CEP ${formatCep(input.cep)}, localizado ${formatAddressShort(memory)}. Consigo te atender com a Claro 🚀. \n\nPara seguir com a contratação, preciso coletar alguns dados seus.\n*QUAL SEU NOME    COMPLETO?*`,
+      reply: `Boa notícia 🎉! Temos viabilidade no CEP ${formatCep(input.cep)}, localizado ${formatAddressShort(memory)}. Consigo te atender com a Claro 🚀. \n\nPara seguir com a contratação, preciso coletar alguns dados seus.\n\n*ME  INFORME SEU NOME    COMPLETO**`,
     };
   }
 
@@ -1201,6 +1201,11 @@ function parseSimpleNumber(text: string) {
 }
 
 function parseBillingDay(text: string) {
+  const directMatch = text.match(/billing-(5|8|10|15|20|25)/i);
+  if (directMatch) {
+    return Number(directMatch[1]);
+  }
+
   const digits = onlyDigits(text);
   const candidates = [Number(digits), Number(wordsToDigits(text))].filter(Boolean);
   return candidates.find((day) => VALID_BILLING_DAYS.includes(day)) ?? null;
@@ -1387,6 +1392,9 @@ function findRecommendedPlan(plans: PlanCandidate[]) {
 
 function selectPlan(text: string, plans: PlanCandidate[]) {
   const normalized = normalizeText(text);
+  const byId = plans.find((plan) => normalizeText(plan.id) === normalized || normalized.includes(normalizeText(plan.id)));
+  if (byId) return byId;
+
   const comboHexa = plans.find((plan) => normalizeText(plan.name).includes("combo hexa"));
   if (
     comboHexa &&
@@ -1727,7 +1735,7 @@ function promptForState(state: string, firstName?: string) {
   const name = firstName ? `${firstName}, ` : "";
   const prompts: Record<string, string> = {
     ASK_CEP: "Para eu consultar a cobertura, me envie o CEP da instalação.",
-    ASK_NAME: "*QUAL SEU NOME    COMPLETO?*",
+    ASK_NAME: "*ME  INFORME SEU NOME    COMPLETO**",
     ASK_DOCUMENT: "Perfeito 🎉! Agora me informe seu CPF para continuar.",
     ASK_BIRTH_DATE: "Agora me informe sua Data de nascimento? 🎂",
     ASK_STREET_NUMBER: `${name}agora, por favor, me informe o *NÚMERO DA SUA RESIDÊNCIA.*`,
@@ -1823,12 +1831,12 @@ function isAlternativeRequest(text: string) {
 
 function isPositive(text: string) {
   const normalized = normalizeText(text);
-  return ["sim", "isso", "esse", "essa", "confirmo", "correto", "ta certo", "esta certo", "pode ser", "fechado", "quero"].some((term) => normalized === term || normalized.includes(term));
+  return ["sim", "confirm-sim", "isso", "esse", "essa", "confirmo", "correto", "ta certo", "esta certo", "pode ser", "fechado", "quero"].some((term) => normalized === term || normalized.includes(term));
 }
 
 function isNegative(text: string) {
   const normalized = normalizeText(text);
-  return ["nao", "não", "errado", "corrigir", "alterar", "mudar"].some((term) => normalized.includes(normalizeText(term)));
+  return ["nao", "não", "confirm-nao", "errado", "corrigir", "alterar", "mudar"].some((term) => normalized.includes(normalizeText(term)));
 }
 
 function isPlanRefusal(text: string) {

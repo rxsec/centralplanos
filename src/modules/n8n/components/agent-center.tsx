@@ -25,7 +25,7 @@ type Tab = "agents" | "plans" | "openai" | "flow";
 const defaultSteps: FlowStep[] = [
   { id: "start", state: "START", title: "Entrada Meta Ads", message: "Olá 👋! Eu sou a {{agente}}, consultora de Planos de Internet. Estou aqui para facilitar seu atendimento. Pode me informar o *CEP da instalação*?" },
   { id: "cep", state: "ASK_CEP", title: "Consultar cobertura", message: "Validar o CEP na base do CRM. Se houver viabilidade, confirmar endereço e pedir nome completo. Se não houver, informar indisponibilidade e finalizar." },
-  { id: "name", state: "ASK_NAME", title: "Nome completo", message: "Boa notícia 🎉! Temos viabilidade no CEP {{cep}}, localizado {{endereco}}. Consigo te atender com a Claro 🚀. \n\nPara seguir com a contratação, preciso coletar alguns dados seus.\n*QUAL SEU NOME    COMPLETO?*" },
+  { id: "name", state: "ASK_NAME", title: "Nome completo", message: "Boa notícia 🎉! Temos viabilidade no CEP {{cep}}, localizado {{endereco}}. Consigo te atender com a Claro 🚀. \n\nPara seguir com a contratação, preciso coletar alguns dados seus.\n\n*ME  INFORME SEU NOME    COMPLETO**" },
   { id: "street-number", state: "ASK_STREET_NUMBER", title: "Número da residência", message: "Perfeito, {{nome}}! Agora, por favor, me informe o *NÚMERO DA SUA RESIDÊNCIA.*" },
   { id: "complement", state: "ASK_COMPLEMENT", title: "Complemento", message: "{{nome}}, a residência possui algum *COMPLEMENTO*? Se sim me informe:\n\n(Exemplo: Apto 2 Bloco A ou Casa 3)" },
   { id: "choose-plan", state: "CHOOSE_PLAN", title: "Escolha do plano", message: "Show 🎉, agora chegou a melhor parte 🚀\nVou te passar os nossos melhores planos disponíveis na sua região. \n\n*LEMBRANDO  QUE TODOS OS PLANOS  POSSUI  GLOBOPLAY GRÁTIS*\n\nLISTA INTERATIVA DE BOTÕES: Escolher Plano" },
