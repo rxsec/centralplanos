@@ -48,6 +48,19 @@ type ZapiWebhookPayload = {
     selectedDisplayText?: string;
     selectedId?: string;
   };
+  listResponseMessage?: {
+    title?: string;
+    message?: string;
+    selectedRowId?: string;
+  };
+  buttonsResponseMessage?: {
+    selectedButtonId?: string;
+    selectedDisplayText?: string;
+  };
+  templateButtonReplyMessage?: {
+    selectedId?: string;
+    selectedDisplayText?: string;
+  };
   image?: { mimeType?: string; imageUrl?: string; caption?: string; downloadError?: string | null };
   document?: { documentUrl?: string; mimeType?: string; fileName?: string; pageCount?: number };
   audio?: { audioUrl?: string; mimeType?: string; seconds?: number; ptt?: boolean; viewOnce?: boolean };
@@ -86,6 +99,15 @@ export async function POST(request: Request) {
     const incoming = await extractIncomingMessage(payload);
 
     if (!phone || !incoming.message) {
+      await writeTechnicalLog({
+        level: "WARNING",
+        category: "webhook",
+        message: "Webhook Z-API sem mensagem interpretável.",
+        method: "POST",
+        endpoint: "/api/webhooks/zapi",
+        integration: "zapi",
+        metadata: payload as Prisma.InputJsonValue,
+      });
       return NextResponse.json(errorResponse("Payload invalido.", "INVALID_WEBHOOK"), {
         status: 400,
       });
@@ -145,6 +167,13 @@ async function extractIncomingMessage(payload: ZapiWebhookPayload) {
     payload.extendedTextMessage?.body ??
     payload.extendedTextMessage?.selectedDisplayText ??
     payload.extendedTextMessage?.selectedId ??
+    payload.listResponseMessage?.title ??
+    payload.listResponseMessage?.message ??
+    payload.listResponseMessage?.selectedRowId ??
+    payload.buttonsResponseMessage?.selectedDisplayText ??
+    payload.buttonsResponseMessage?.selectedButtonId ??
+    payload.templateButtonReplyMessage?.selectedDisplayText ??
+    payload.templateButtonReplyMessage?.selectedId ??
     findInteractiveSelection(payload) ??
     findNestedMessageText(payload.message) ??
     findNestedMessageText(payload.text) ??
@@ -208,8 +237,11 @@ function findNestedMessageText(value: unknown, depth = 0): string | undefined {
   const record = value as Record<string, unknown>;
   const preferredKeys = [
     "selectedDisplayText",
+    "selectedButtonId",
+    "selectedRowId",
     "selectedId",
     "displayText",
+    "paramsJson",
     "title",
     "description",
     "label",
@@ -259,8 +291,11 @@ function findSelectionInRecord(value: unknown, depth = 0): string | undefined {
   const record = value as Record<string, unknown>;
   const directKeys = [
     "selectedDisplayText",
+    "selectedButtonId",
+    "selectedRowId",
     "selectedId",
     "displayText",
+    "paramsJson",
     "buttonText",
     "title",
     "rowTitle",
@@ -269,8 +304,11 @@ function findSelectionInRecord(value: unknown, depth = 0): string | undefined {
   ];
 
   for (const key of directKeys) {
-    const value = record[key];
-    if (typeof value === "string" && value.trim()) return value.trim();
+    const candidate = record[key];
+    if (typeof candidate === "string" && candidate.trim()) {
+      const fromJson = extractTextFromJsonString(candidate);
+      return fromJson || candidate.trim();
+    }
   }
 
   for (const nestedValue of Object.values(record)) {
@@ -279,6 +317,18 @@ function findSelectionInRecord(value: unknown, depth = 0): string | undefined {
   }
 
   return undefined;
+}
+
+function extractTextFromJsonString(value: string) {
+  const trimmed = value.trim();
+  if (!(trimmed.startsWith("{") || trimmed.startsWith("["))) return undefined;
+
+  try {
+    const parsed = JSON.parse(trimmed);
+    return findSelectionInRecord(parsed);
+  } catch {
+    return undefined;
+  }
 }
 
 async function extractLocationData(location: NonNullable<ZapiWebhookPayload["location"]>): Promise<ExtractedCustomerData> {
