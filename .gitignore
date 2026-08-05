@@ -1,0 +1,15 @@
+node_modules
+.next
+.env
+.env.local
+.agents
+.codex
+dist
+coverage
+*.log
+*.pdf
+public/*.xls
+public/*.xlsx
+.vercel
+.env*
+!.env.example
