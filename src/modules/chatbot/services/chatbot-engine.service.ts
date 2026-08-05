@@ -176,7 +176,7 @@ export class ChatbotEngineService {
       return {
         state: "ASK_CEP",
         memory: {},
-        reply: messageFor("START", `Ola 👋! Eu sou a ${input.agent?.name ?? "Marcia"}, consultora da Claro. Estou aqui para facilitar seu atendimento. Pode me informar o CEP da instalacao?`),
+        reply: messageFor("START", `Olá 👋! Eu sou a ${input.agent?.name ?? "Marcia"}, consultora de Planos de Internet. Estou aqui para facilitar seu atendimento. Pode me informar o *CEP da instalação*?`),
       };
     }
 
@@ -257,7 +257,7 @@ export class ChatbotEngineService {
       return {
         state: "ASK_CEP",
         memory,
-        reply: messageFor("START", `Ola 👋! Eu sou a ${input.agent?.name ?? "Marcia"}, consultora da Claro. Estou aqui para facilitar seu atendimento. Pode me informar o CEP da instalacao?`),
+        reply: messageFor("START", `Olá 👋! Eu sou a ${input.agent?.name ?? "Marcia"}, consultora de Planos de Internet. Estou aqui para facilitar seu atendimento. Pode me informar o *CEP da instalação*?`),
       };
     }
 
@@ -706,7 +706,7 @@ export class ChatbotEngineService {
       return {
         state: "FINISHED",
         memory,
-        reply: answer || "Sigo por aqui como sua consultora da Claro. Se quiser, posso te ajudar com outra duvida, retomar a contratacao ou consultar outro endereco. 😊",
+        reply: answer || "Sigo por aqui como sua consultora da Claro. Se quiser, posso te ajudar com outra dúvida, retomar a contratação ou consultar outro endereço. 😊",
       };
     }
 
@@ -714,14 +714,14 @@ export class ChatbotEngineService {
       return {
         state: "HUMAN_HANDOFF",
         memory,
-        reply: "Seu atendimento está sinalizado para um consultor. Assim que possível, nossa equipe continua por aqui. 😊",
+        reply: "Seu atendimento está sinalizado para uma consultora. Assim que possível, nossa equipe continua por aqui. 😊",
       };
     }
 
     return {
       state: "ASK_CEP",
       memory: {},
-      reply: messageFor("START", `Ola 👋! Eu sou a ${input.agent?.name ?? "Marcia"}, consultora da Claro. Estou aqui para facilitar seu atendimento. Pode me informar o CEP da instalacao?`),
+      reply: messageFor("START", `Olá 👋! Eu sou a ${input.agent?.name ?? "Marcia"}, consultora de Planos de Internet. Estou aqui para facilitar seu atendimento. Pode me informar o *CEP da instalação*?`),
     };
   }
 
@@ -875,16 +875,16 @@ export class ChatbotEngineService {
 
       return await this.openAiService.answerCommercialQuestion(
         [
-          `Voce e ${input.agent?.name ?? "Marcia"}, Consultora Comercial da Claro em um atendimento pelo WhatsApp.`,
-          `Personalidade: ${input.agent?.personality ?? "Consultora humana, simpatica, persuasiva e objetiva."}`,
+          `Você é ${input.agent?.name ?? "Marcia"}, Consultora Comercial da Claro em um atendimento pelo WhatsApp.`,
+          `Personalidade: ${input.agent?.personality ?? "Consultora humana, simpática, persuasiva e objetiva."}`,
           `Regras personalizadas:\n${formatAgentRules(input.agent?.rules)}`,
-          "Responda em portugues do Brasil, de forma breve, vendedora e natural.",
-          "Nunca invente preco, cobertura ou plano. Use somente os planos listados.",
-          "Use no maximo um emoji.",
+          "Responda em português do Brasil, de forma breve, vendedora e natural.",
+          "Nunca invente preço, cobertura ou plano. Use somente os planos listados.",
+          "Use no máximo um emoji.",
           "Depois de responder, conduza o cliente para escolher um plano.",
           `Cliente: ${input.customerName ?? "cliente"}`,
-          `Planos disponiveis:\n${planLines || "Valores ainda nao cadastrados."}`,
-          `Mensagem do cliente: ${input.customerMessage}`,
+          `Planos disponíveis:\n${planLines || "Valores ainda não cadastrados."}`,
+          `Mensagem da cliente: ${input.customerMessage}`,
         ].join("\n\n"),
       );
     } catch {
@@ -907,24 +907,24 @@ export class ChatbotEngineService {
 
       return await this.openAiService.answerCommercialQuestion(
         [
-          `Voce e ${input.agent?.name ?? "Marcia"}, consultora comercial da Claro, falando com a cliente no WhatsApp.`,
+          `Você é ${input.agent?.name ?? "Marcia"}, consultora comercial da Claro, falando com a cliente no WhatsApp.`,
           `Personalidade: ${input.agent?.personality ?? "Consultora humana, persuasiva, cordial e objetiva."}`,
           `Regras:\n${formatAgentRules(input.agent?.rules)}`,
-          `O funil esta na etapa ${input.state}. Responda a mensagem do cliente, trate objecoes com postura comercial e depois retome exatamente para a etapa atual sem pular o fluxo.`,
-          "Voce nunca pode dizer que e IA, robo, automacao ou assistente virtual.",
-          "Voce sempre fala como consultora da Claro.",
-          "Se o cliente demonstrar objecao, falta de interesse, cancelamento ou desconfiança, tente reverter com argumento comercial leve, humano e seguro.",
-          "Responda primeiro a pergunta real do cliente de forma util, natural e convincente. Nao desvie para lista de planos se isso nao foi pedido.",
-          "So liste planos ou valores de forma organizada quando o cliente pedir opcoes, planos disponiveis, comparacao, velocidade ou preco.",
-          "Quando a pergunta for sobre uso pratico, estabilidade, trabalho, aplicativos, qualidade, instalacao ou confianca, responda como uma consultora humana explicando com clareza e seguranca.",
+          `O funil está na etapa ${input.state}. Responda à mensagem da cliente, trate objeções com postura comercial e depois retome exatamente para a etapa atual sem pular o fluxo.`,
+          "Você nunca pode dizer que é IA, robô, automação ou assistente virtual.",
+          "Você sempre fala como consultora da Claro.",
+          "Se a cliente demonstrar objeção, falta de interesse, cancelamento ou desconfiança, tente reverter com argumento comercial leve, humano e seguro.",
+          "Responda primeiro à pergunta real da cliente de forma útil, natural e convincente. Não desvie para lista de planos se isso não foi pedido.",
+          "Só liste planos ou valores de forma organizada quando a cliente pedir opções, planos disponíveis, comparação, velocidade ou preço.",
+          "Quando a pergunta for sobre uso prático, estabilidade, trabalho, aplicativos, qualidade, instalação ou confiança, responda como uma consultora humana explicando com clareza e segurança.",
           "Se precisar falar de planos, use somente os planos listados abaixo.",
-          "Se precisar falar de endereco ou cobertura, use apenas os dados ja conhecidos nesta conversa.",
-          "Nao responda temas politicos, religiosos ou fora do contexto comercial.",
+          "Se precisar falar de endereço ou cobertura, use apenas os dados já conhecidos nesta conversa.",
+          "Não responda temas políticos, religiosos ou fora do contexto comercial.",
           "Use humor leve e natural quando combinar com a conversa, sem exagerar.",
-          "Use no maximo dois emojis.",
-          "Depois de responder, feche puxando o cliente de volta para a etapa atual do fluxo.",
-          `Contexto conhecido do cliente:\n${summarizeMemoryForAi(input.memory)}`,
-          `Planos disponiveis:\n${planLines || "Nenhum plano ativo encontrado no momento."}`,
+          "Use no máximo dois emojis.",
+          "Depois de responder, feche puxando a cliente de volta para a etapa atual do fluxo.",
+          `Contexto conhecido da cliente:\n${summarizeMemoryForAi(input.memory)}`,
+          `Planos disponíveis:\n${planLines || "Nenhum plano ativo encontrado no momento."}`,
           `Cliente: ${input.customerName ?? "cliente"}`,
           `Pergunta: ${input.message}`,
         ].join("\n\n"),
@@ -1676,14 +1676,14 @@ function callResumePrompt(
       flowMessage(
         agent?.flow,
         "START",
-        `Ola! Eu sou a ${agent?.name ?? "Marcia"}, consultora comercial da Claro. Pode me informar o CEP da instalacao?`,
+        `Olá! Eu sou a ${agent?.name ?? "Marcia"}, consultora de Planos de Internet. Pode me informar o *CEP da instalação*?`,
       ),
       memory,
       agent?.name,
     );
   }
   if (state === "FINISHED") return "Seu atendimento já está registrado. Se precisar, envie reiniciar para começar novamente.";
-  if (state === "HUMAN_HANDOFF") return "Seu atendimento esta sinalizado para uma consultora humana continuar por aqui.";
+  if (state === "HUMAN_HANDOFF") return "Seu atendimento está sinalizado para uma consultora humana continuar por aqui.";
   return promptForState(state, getFirstName(memory.name));
 }
 
@@ -1825,13 +1825,13 @@ function formatAgentRules(rules: unknown) {
 
 function summarizeMemoryForAi(memory: ChatMemory) {
   return [
-    `Nome: ${memory.name ?? "nao informado"}`,
-    `CEP: ${formatCep(memory.cep) || "nao informado"}`,
-    `Endereco: ${formatFullAddress(memory)}`,
-    `Documento: ${memory.cpfCnpj ?? "nao informado"}`,
-    `Nascimento: ${memory.birthDate ? formatDate(new Date(memory.birthDate)) : "nao informado"}`,
-    `E-mail: ${memory.email ?? "nao informado"}`,
-    `Vencimento: ${memory.billingDueDay ?? "nao informado"}`,
-    `Plano: ${memory.planName ?? "nao informado"}`,
+    `Nome: ${memory.name ?? "não informado"}`,
+    `CEP: ${formatCep(memory.cep) || "não informado"}`,
+    `Endereço: ${formatFullAddress(memory)}`,
+    `Documento: ${memory.cpfCnpj ?? "não informado"}`,
+    `Nascimento: ${memory.birthDate ? formatDate(new Date(memory.birthDate)) : "não informado"}`,
+    `E-mail: ${memory.email ?? "não informado"}`,
+    `Vencimento: ${memory.billingDueDay ?? "não informado"}`,
+    `Plano: ${memory.planName ?? "não informado"}`,
   ].join("\n");
 }

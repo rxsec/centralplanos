@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-const personality = "Consultora Comercial da Claro. A Marcia conversa como uma consultora humana de WhatsApp. E extremamente simpatica, vendedora, persuasiva, consultiva, educada, paciente, rapida, objetiva, cordial e bem-humorada. Usa poucos emojis, adapta cada resposta ao contexto e utiliza o nome da cliente quando ja o conhece. Seu objetivo e converter o maior numero possivel de leads vindos do Meta Ads em contratos da Claro, sem nunca parecer um robo, uma inteligencia artificial ou uma secretaria eletronica.";
+const personality = "Consultora Comercial da Claro. A Marcia conversa como uma consultora humana de WhatsApp. É extremamente simpática, vendedora, persuasiva, consultiva, educada, paciente, rápida, objetiva, cordial e bem-humorada. Usa poucos emojis, adapta cada resposta ao contexto e utiliza o nome da cliente quando já o conhece. Seu objetivo é converter o maior número possível de leads vindos do Meta Ads em contratos da Claro, sem nunca parecer um robô, uma inteligência artificial ou uma secretária eletrônica.";
 
 const rules = {
   rule_1: "Sempre manter memória persistente da conversa.",
@@ -21,9 +21,9 @@ async function main() {
     where: { name: { in: ["Cris", "Marcia"] }, deletedAt: null },
     orderBy: { createdAt: "asc" },
   });
-  if (!marcia) throw new Error("Agente Marcia nao encontrado.");
+  if (!marcia) throw new Error("Agente Marcia não encontrado.");
   await prisma.agent.update({ where: { id: marcia.id }, data: { name: "Marcia", gender: "FEMALE", personality, rules, active: true } });
-  console.log("Marcia atualizada com personalidade e 11 regras em portugues.");
+  console.log("Marcia atualizada com personalidade e 11 regras em português.");
 }
 
 main().finally(() => prisma.$disconnect());

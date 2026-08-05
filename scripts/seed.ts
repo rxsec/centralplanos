@@ -1,7 +1,11 @@
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
+import { CepImportService } from "@/modules/ceps/services/cep-import.service";
 
 async function main() {
+  const cepImportService = new CepImportService();
   const zapiBaseUrl = process.env.ZAPI_BASE_URL ?? "https://api.z-api.io";
   const zapiInstanceId = process.env.ZAPI_INSTANCE_ID ?? "";
   const zapiToken = process.env.ZAPI_TOKEN ?? "";
@@ -17,7 +21,7 @@ async function main() {
       name: "Marcia",
       gender: "FEMALE",
       personality:
-        "Consultora Comercial da Claro. A Marcia conversa como uma consultora humana de WhatsApp. E extremamente simpatica, vendedora, persuasiva, consultiva, educada, paciente, rapida, objetiva, cordial e bem-humorada. Usa poucos emojis, adapta cada resposta ao contexto e utiliza o nome da cliente quando ja o conhece. Seu objetivo e converter o maior numero possivel de leads vindos do Meta Ads em contratos da Claro, sem nunca parecer um robo, uma inteligencia artificial ou uma secretaria eletronica.",
+        "Consultora Comercial da Claro. A Marcia conversa como uma consultora humana de WhatsApp. É extremamente simpática, vendedora, persuasiva, consultiva, educada, paciente, rápida, objetiva, cordial e bem-humorada. Usa poucos emojis, adapta cada resposta ao contexto e utiliza o nome da cliente quando já o conhece. Seu objetivo é converter o maior número possível de leads vindos do Meta Ads em contratos da Claro, sem nunca parecer um robô, uma inteligência artificial ou uma secretária eletrônica.",
       rules: {
         rule_1: "Sempre manter memória persistente da conversa.",
         rule_2: "Quando responder uma pergunta fora do fluxo de vendas, utilizar a OpenAI e depois retornar ao estado atual do fluxo.",
@@ -50,7 +54,7 @@ async function main() {
       name: "Marcia",
       gender: "FEMALE",
       personality:
-        "Consultora Comercial da Claro. A Marcia conversa como uma consultora humana de WhatsApp. E extremamente simpatica, vendedora, persuasiva, consultiva, educada, paciente, rapida, objetiva, cordial e bem-humorada. Usa poucos emojis, adapta cada resposta ao contexto e utiliza o nome da cliente quando ja o conhece. Seu objetivo e converter o maior numero possivel de leads vindos do Meta Ads em contratos da Claro, sem nunca parecer um robo, uma inteligencia artificial ou uma secretaria eletronica.",
+        "Consultora Comercial da Claro. A Marcia conversa como uma consultora humana de WhatsApp. É extremamente simpática, vendedora, persuasiva, consultiva, educada, paciente, rápida, objetiva, cordial e bem-humorada. Usa poucos emojis, adapta cada resposta ao contexto e utiliza o nome da cliente quando já o conhece. Seu objetivo é converter o maior número possível de leads vindos do Meta Ads em contratos da Claro, sem nunca parecer um robô, uma inteligência artificial ou uma secretária eletrônica.",
       rules: {
         rule_1: "Sempre manter memória persistente da conversa.",
         rule_2: "Quando responder uma pergunta fora do fluxo de vendas, utilizar a OpenAI e depois retornar ao estado atual do fluxo.",
@@ -91,7 +95,7 @@ async function main() {
       await prisma.plan.create({
         data: {
           ...plan,
-          description: "Plano inicial cadastrado para operacao comercial.",
+          description: "Plano inicial cadastrado para operação comercial.",
           active: true,
         },
       });
@@ -120,6 +124,14 @@ async function main() {
       create: setting,
       update: { value: setting.value },
     });
+  }
+
+  const coverageCount = await prisma.coverageCep.count({ where: { deletedAt: null } });
+  if (coverageCount === 0) {
+    const filePath = resolve(process.cwd(), "data/CEPS_CRIS_ABR_26.xlsx");
+    const buffer = await readFile(filePath);
+    const cepResult = await cepImportService.importFromBuffer(buffer, "CEPS_CRIS_ABR_26.xlsx");
+    console.log(`Base de CEP importada: ${cepResult.imported}/${cepResult.totalRows} linhas.`);
   }
 
   const adminEmail = process.env.ADMIN_INITIAL_EMAIL ?? "admin@centraldosplanos.com";

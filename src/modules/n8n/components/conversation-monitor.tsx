@@ -21,7 +21,7 @@ export function ConversationMonitor() {
     <Card className="xl:col-span-2">
       <CardHeader>
         <CardTitle>Conversas do Chatbot</CardTitle>
-        <CardDescription>Monitoramento das ultimas interacoes processadas pela Marcia</CardDescription>
+        <CardDescription>Monitoramento das últimas interações processadas pela Marcia</CardDescription>
       </CardHeader>
       <CardContent>
         {loading ? (
