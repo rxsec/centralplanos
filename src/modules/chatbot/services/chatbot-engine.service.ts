@@ -687,7 +687,7 @@ export class ChatbotEngineService {
           state: "FINISHED",
           memory,
           leadId: lead.id,
-          reply: "Perfeito! 🎉 Seus dados foram confirmados.\nVou cadastrar aqui, deixa o celular ligado 📱, porque aprovando você receberá uma ligação da nossa central. Você precisa confirmar as informações do seu plano contratado, tudo bem?\n\nObrigado por escolher a Claro! 🚀 Se precisar de qualquer coisa, é só me chamar!",
+          reply: "Perfeito! ✅\n\nRecebemos sua solicitação com sucesso.\n\nPor favor, deixe o celular ligado. Nossa equipe vai entrar em contato para agendar a data de instalação. 📲",
         };
       }
 
