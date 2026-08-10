@@ -70,6 +70,7 @@ export class ZapiService {
         }
 
         const responseBody = await response.text();
+        const friendlyError = getFriendlyZapiError(responseBody);
         await writeTechnicalLog({
           level: "ERROR",
           category: "integration",
@@ -82,7 +83,7 @@ export class ZapiService {
         });
 
         if (response.status < 500 || attempt === 2) {
-          throw new Error("Falha ao enviar mensagem pela Z-API.");
+          throw new Error(friendlyError ?? "Falha ao enviar mensagem pela Z-API.");
         }
       } catch (error) {
         if (attempt === 2) throw error;
@@ -159,6 +160,7 @@ export class ZapiService {
     }
 
     const responseBody = await response.text();
+    const friendlyError = getFriendlyZapiError(responseBody);
     await writeTechnicalLog({
       level: "ERROR",
       category: "integration",
@@ -170,7 +172,7 @@ export class ZapiService {
       metadata: { response: responseBody.slice(0, 500) },
     });
 
-    throw new Error("Falha ao enviar mídia pela Z-API.");
+    throw new Error(friendlyError ?? "Falha ao enviar mídia pela Z-API.");
   }
 
   private async optionalPost(action: string, body: Record<string, string>, config?: Partial<ZapiConfig>) {
@@ -205,4 +207,29 @@ function cleanConfig(config?: Partial<ZapiConfig>) {
 
 function wait(milliseconds: number) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+function getFriendlyZapiError(responseBody: string) {
+  const parsed = safeJsonParse(responseBody);
+  const rawMessage = typeof parsed?.error === "string"
+    ? parsed.error
+    : typeof parsed?.message === "string"
+      ? parsed.message
+      : responseBody;
+
+  if (!rawMessage) return null;
+
+  if (rawMessage.includes("must subscribe to this instance again")) {
+    return "A Z-API bloqueou o envio desta instância. Entre no painel da Z-API e refaça o subscribe da instância para voltar a enviar mensagens.";
+  }
+
+  return rawMessage.slice(0, 300);
+}
+
+function safeJsonParse(value: string) {
+  try {
+    return JSON.parse(value) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
 }

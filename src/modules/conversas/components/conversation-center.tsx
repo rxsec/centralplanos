@@ -112,6 +112,7 @@ export function ConversationCenter() {
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const conversationListRef = useRef<HTMLDivElement | null>(null);
+  const isZapiSubscriptionError = statusMessage?.includes("refaça o subscribe da instância") ?? false;
 
   async function loadConversations(params?: {
     preferredId?: string | null;
@@ -438,7 +439,14 @@ export function ConversationCenter() {
       </Card>
 
       {statusMessage ? (
-        <div className="rounded-md border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm text-cyan-900">{statusMessage}</div>
+        <div className={`rounded-md border px-4 py-3 text-sm ${
+          isZapiSubscriptionError
+            ? "border-amber-200 bg-amber-50 text-amber-950"
+            : "border-cyan-200 bg-cyan-50 text-cyan-900"
+        }`}
+        >
+          {statusMessage}
+        </div>
       ) : null}
 
       <div className="grid gap-4 xl:grid-cols-[340px_minmax(0,1fr)]">
@@ -757,6 +765,11 @@ export function ConversationCenter() {
               value={createForm.firstMessage}
               onChange={(event) => setCreateForm((current) => ({ ...current, firstMessage: event.target.value }))}
             />
+            {isZapiSubscriptionError ? (
+              <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
+                A instância da Z-API está bloqueando novos envios. Entre no painel da Z-API e refaça o subscribe da instância antes de tentar novamente.
+              </div>
+            ) : null}
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>Cancelar</Button>
               <Button type="button" onClick={() => void startConversation()}>Preparar envio</Button>

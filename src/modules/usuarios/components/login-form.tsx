@@ -47,13 +47,13 @@ export function LoginForm() {
   }
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
+    <form className="space-y-5" onSubmit={handleSubmit}>
       <label className="block space-y-2">
-        <span className="text-sm font-medium">E-mail</span>
+        <span className="text-sm font-medium text-slate-100">E-mail</span>
         <div className="relative">
-          <Mail className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-slate-400" />
+          <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-cyan-100/70" />
           <Input
-            className="pl-9 text-slate-950"
+            className="h-12 rounded-xl border-white/10 bg-white/95 pl-11 text-slate-950 shadow-[0_10px_30px_rgba(2,12,27,0.12)] placeholder:text-slate-400 focus-visible:ring-cyan-300"
             name="email"
             placeholder="usuario@centraldosplanos.com.br"
             required
@@ -62,11 +62,11 @@ export function LoginForm() {
         </div>
       </label>
       <label className="block space-y-2">
-        <span className="text-sm font-medium">Senha</span>
+        <span className="text-sm font-medium text-slate-100">Senha</span>
         <div className="relative">
-          <Lock className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-slate-400" />
+          <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-cyan-100/70" />
           <Input
-            className="pl-9 pr-10 text-slate-950"
+            className="h-12 rounded-xl border-white/10 bg-white/95 pl-11 pr-11 text-slate-950 shadow-[0_10px_30px_rgba(2,12,27,0.12)] placeholder:text-slate-400 focus-visible:ring-cyan-300"
             name="password"
             placeholder="Digite sua senha"
             required
@@ -74,7 +74,7 @@ export function LoginForm() {
           />
           <button
             aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-            className="absolute right-3 top-3 text-slate-400"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-700"
             onClick={() => setShowPassword((current) => !current)}
             type="button"
           >
@@ -82,10 +82,13 @@ export function LoginForm() {
           </button>
         </div>
       </label>
-      {error ? <p className="rounded-md bg-red-500/15 p-3 text-sm text-red-100">{error}</p> : null}
-      <Button className="w-full" disabled={loading} type="submit">
+      {error ? <p className="rounded-xl border border-red-300/20 bg-red-500/15 p-3 text-sm text-red-100">{error}</p> : null}
+      <Button className="h-12 w-full rounded-xl bg-gradient-to-r from-cyan-400 via-sky-500 to-blue-600 text-[15px] font-medium text-slate-950 shadow-[0_16px_35px_rgba(14,165,233,0.35)] transition hover:brightness-105" disabled={loading} type="submit">
         {loading ? "Entrando" : "Entrar"}
       </Button>
+      <p className="text-center text-xs leading-5 text-slate-400">
+        Ambiente protegido para a operação comercial da Central dos Planos.
+      </p>
     </form>
   );
 }
