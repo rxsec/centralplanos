@@ -4,122 +4,115 @@ import { LoginForm } from "@/modules/usuarios/components/login-form";
 
 export default function LoginPage() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#061a31] text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(19,174,255,0.18),_transparent_32%),radial-gradient(circle_at_bottom_right,_rgba(14,98,182,0.28),_transparent_28%),linear-gradient(135deg,_#071a32_0%,_#08213d_40%,_#04111f_100%)]" />
-      <div className="absolute left-[-12%] top-20 h-72 w-72 rounded-full bg-cyan-400/10 blur-3xl" />
-      <div className="absolute bottom-0 right-[-8%] h-96 w-96 rounded-full bg-sky-500/10 blur-3xl" />
-
-      <div className="relative mx-auto flex min-h-screen w-full max-w-7xl items-center px-4 py-10 sm:px-6 lg:px-8">
-        <div className="grid w-full items-stretch gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <section className="hidden rounded-[28px] border border-white/10 bg-white/[0.04] p-8 shadow-[0_30px_120px_rgba(3,10,24,0.45)] backdrop-blur md:p-10 lg:flex lg:min-h-[720px] lg:flex-col lg:justify-between">
-            <div className="space-y-8">
-              <div className="inline-flex items-center gap-3 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-sm text-cyan-50/90">
-                <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.95)]" />
-                Revenue workspace for internet sales teams
+    <main className="min-h-screen bg-white text-slate-950">
+      <div className="grid min-h-screen lg:grid-cols-[1.08fr_0.92fr]">
+        <section className="flex min-h-screen flex-col bg-white">
+          <div className="flex items-center justify-between px-6 py-6 sm:px-10 lg:px-14">
+            <div className="flex items-center gap-3">
+              <BrandLogo compact className="h-11 w-11 rounded-xl border-slate-200 bg-[#04162b]" priority />
+              <div>
+                <p className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">Central dos Planos</p>
+                <p className="text-sm text-slate-500">CRM comercial</p>
               </div>
+            </div>
 
-              <div className="max-w-2xl space-y-5">
-                <h1 className="text-4xl font-semibold leading-tight tracking-[-0.03em] text-white md:text-5xl">
-                  O CRM da Central dos Planos com presença de produto global.
+            <div className="hidden items-center gap-5 text-sm sm:flex">
+              <a className="font-medium text-[#2563eb] transition hover:text-[#1d4ed8]" href="mailto:suporte@centraldosplanos.com">
+                Precisa de ajuda?
+              </a>
+              <div className="h-5 w-px bg-slate-200" />
+              <span className="text-slate-500">Português</span>
+            </div>
+          </div>
+
+          <div className="flex flex-1 items-center px-6 pb-12 pt-4 sm:px-10 lg:px-14">
+            <div className="mx-auto w-full max-w-xl lg:mx-0 lg:max-w-[600px]">
+              <div className="max-w-lg">
+                <p className="text-sm font-medium uppercase tracking-[0.2em] text-[#2563eb]">Sales workspace</p>
+                <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl">
+                  Inicie sua sessão e entre na operação.
                 </h1>
-                <p className="max-w-xl text-lg leading-8 text-slate-300">
-                  Organize conversas, acelere vendas e acompanhe sua operação em um workspace pensado para times comerciais que vendem com velocidade.
+                <p className="mt-5 text-lg leading-8 text-slate-500">
+                  Acesse a Central dos Planos para acompanhar leads, conversas, planos e toda a rotina comercial em um único painel.
                 </p>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-3">
-                <MetricCard value="24/7" label="Atendimento ativo" />
-                <MetricCard value="IA + CRM" label="Fluxo comercial integrado" />
-                <MetricCard value="Tempo real" label="Operação conectada" />
-              </div>
-            </div>
-
-            <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
-              <div className="rounded-[24px] border border-white/10 bg-[#071f3d]/80 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-                <div className="mb-5 flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-slate-300">Pipeline overview</p>
-                    <p className="text-2xl font-semibold text-white">Ritmo comercial forte</p>
-                  </div>
-                  <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-200">
-                    +18.4% este mês
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <ProgressRow label="Leads qualificados" value="78%" width="w-[78%]" />
-                  <ProgressRow label="Conversões em andamento" value="64%" width="w-[64%]" />
-                  <ProgressRow label="Retenção operacional" value="91%" width="w-[91%]" />
-                </div>
-              </div>
-
-              <div className="rounded-[24px] border border-white/10 bg-white/[0.06] p-5">
-                <p className="text-sm text-slate-300">Experience layer</p>
-                <div className="mt-4 space-y-4">
-                  <FeaturePill>Inbox com controle humano e chatbot</FeaturePill>
-                  <FeaturePill>Gestão de leads, CEPs e planos</FeaturePill>
-                  <FeaturePill>Operação desenhada para alta conversão</FeaturePill>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="flex items-center justify-center">
-            <div className="relative w-full max-w-md overflow-hidden rounded-[30px] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.06))] p-6 shadow-[0_30px_100px_rgba(0,0,0,0.45)] backdrop-blur-xl sm:p-8">
-              <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/60 to-transparent" />
-              <div className="absolute left-1/2 top-0 h-28 w-28 -translate-x-1/2 rounded-full bg-cyan-400/15 blur-3xl" />
-
-              <div className="relative">
-                <div className="mb-8 text-center">
-                  <BrandLogo className="mx-auto mb-5 shadow-[0_12px_40px_rgba(7,170,255,0.18)]" priority />
-                  <div className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.22em] text-cyan-100">
-                    Sales workspace
-                  </div>
-                  <h2 className="mt-5 text-3xl font-semibold tracking-[-0.03em] text-white">Central dos Planos</h2>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">
-                    Entre na sua operação comercial com uma experiência mais premium, rápida e confiável.
-                  </p>
-                </div>
-
-                <Suspense fallback={<div className="h-64 rounded-2xl bg-white/5" />}>
+              <div className="mt-12 max-w-[540px]">
+                <Suspense fallback={<div className="h-72 rounded-3xl border border-slate-200 bg-slate-50" />}>
                   <LoginForm />
                 </Suspense>
               </div>
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
+
+        <section className="relative hidden overflow-hidden bg-[linear-gradient(180deg,#4383f4_0%,#2d6fe9_100%)] lg:flex lg:min-h-screen lg:flex-col lg:justify-between">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.24),_transparent_26%),radial-gradient(circle_at_bottom_left,_rgba(20,74,182,0.25),_transparent_30%)]" />
+
+          <div className="relative px-10 pb-12 pt-16 xl:px-14">
+            <div className="mx-auto max-w-md text-center text-white">
+              <h2 className="text-4xl font-semibold leading-tight tracking-[-0.04em]">
+                Venda mais com uma operação que responde mais rápido.
+              </h2>
+              <p className="mt-6 text-lg leading-8 text-blue-50/90">
+                Organize mensagens, ative a Marcia no momento certo e transforme atendimento em conversão com uma experiência comercial mais profissional.
+              </p>
+              <span className="mt-6 inline-flex text-base font-semibold text-white underline decoration-white/60 underline-offset-4">
+                Visual inspirado em SaaS internacional
+              </span>
+            </div>
+          </div>
+
+          <div className="relative flex flex-1 items-center justify-center px-10 pb-16">
+            <div className="relative w-full max-w-[420px]">
+              <div className="absolute right-2 top-[-18px] flex h-9 w-9 items-center justify-center rounded-full bg-[#2f5496] text-white/90 shadow-lg">
+                ×
+              </div>
+
+              <div className="rounded-[28px] bg-white p-5 shadow-[0_25px_80px_rgba(18,44,110,0.28)]">
+                <div className="rounded-[22px] border border-slate-100 bg-white p-4">
+                  <p className="text-xs font-semibold text-slate-400">Conversa em destaque</p>
+                  <div className="mt-4 rounded-[18px] bg-[#f8fbff] p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-sm font-semibold text-white">
+                        M
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-slate-900">Marcia • Consultora</p>
+                        <p className="mt-1 text-sm leading-6 text-slate-600">
+                          Olá! Posso te ajudar a encontrar o melhor plano de internet para o seu endereço.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 rounded-2xl bg-white p-3 shadow-sm">
+                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Cliente</p>
+                      <p className="mt-2 text-sm text-slate-700">Quero um plano com instalação rápida para minha casa.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-[22px] bg-white px-5 py-4 shadow-[0_20px_60px_rgba(18,44,110,0.22)]">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-sm text-slate-400">Escreva uma resposta...</p>
+                  <div className="flex items-center gap-2 text-slate-400">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200">☺</span>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200">+</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="absolute bottom-[-36px] right-5 flex h-16 w-16 items-center justify-center rounded-full bg-[#031424] shadow-[0_16px_40px_rgba(3,20,36,0.35)]">
+                <div className="text-sm font-semibold text-white">CP</div>
+                <div className="absolute bottom-1 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-semibold text-white">
+                  1
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </main>
-  );
-}
-
-function MetricCard({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-4">
-      <p className="text-2xl font-semibold text-white">{value}</p>
-      <p className="mt-1 text-sm text-slate-300">{label}</p>
-    </div>
-  );
-}
-
-function ProgressRow({ label, value, width }: { label: string; value: string; width: string }) {
-  return (
-    <div>
-      <div className="mb-2 flex items-center justify-between text-sm">
-        <span className="text-slate-300">{label}</span>
-        <span className="font-medium text-cyan-100">{value}</span>
-      </div>
-      <div className="h-2 rounded-full bg-white/10">
-        <div className={`h-2 rounded-full bg-gradient-to-r from-cyan-300 via-sky-400 to-blue-500 ${width}`} />
-      </div>
-    </div>
-  );
-}
-
-function FeaturePill({ children }: { children: string }) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-[#081e39] px-4 py-3 text-sm text-slate-200">
-      {children}
-    </div>
   );
 }

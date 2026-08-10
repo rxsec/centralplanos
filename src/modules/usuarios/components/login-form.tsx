@@ -47,28 +47,36 @@ export function LoginForm() {
   }
 
   return (
-    <form className="space-y-5" onSubmit={handleSubmit}>
+    <form className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.07)] sm:p-8" onSubmit={handleSubmit}>
+      <div className="mb-8">
+        <h2 className="text-3xl font-semibold tracking-[-0.03em] text-slate-950">Iniciar sessão</h2>
+        <p className="mt-3 text-base leading-7 text-slate-500">
+          Entre com seu e-mail e sua senha para acessar a sua central comercial.
+        </p>
+      </div>
+
+      <div className="space-y-5">
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-100">E-mail</span>
+        <span className="text-sm font-medium text-slate-700">Autentique-se com o seu endereço de e-mail</span>
         <div className="relative">
-          <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-cyan-100/70" />
+          <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
-            className="h-12 rounded-xl border-white/10 bg-white/95 pl-11 text-slate-950 shadow-[0_10px_30px_rgba(2,12,27,0.12)] placeholder:text-slate-400 focus-visible:ring-cyan-300"
+            className="h-12 rounded-xl border-slate-200 bg-white pl-11 text-slate-950 placeholder:text-slate-400 focus-visible:ring-[#2563eb]"
             name="email"
-            placeholder="usuario@centraldosplanos.com.br"
+            placeholder="Introduza o seu e-mail..."
             required
             type="email"
           />
         </div>
       </label>
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-100">Senha</span>
+        <span className="text-sm font-medium text-slate-700">Palavra-passe</span>
         <div className="relative">
-          <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-cyan-100/70" />
+          <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
-            className="h-12 rounded-xl border-white/10 bg-white/95 pl-11 pr-11 text-slate-950 shadow-[0_10px_30px_rgba(2,12,27,0.12)] placeholder:text-slate-400 focus-visible:ring-cyan-300"
+            className="h-12 rounded-xl border-slate-200 bg-white pl-11 pr-11 text-slate-950 placeholder:text-slate-400 focus-visible:ring-[#2563eb]"
             name="password"
-            placeholder="Digite sua senha"
+            placeholder="Introduza a sua palavra-passe..."
             required
             type={showPassword ? "text" : "password"}
           />
@@ -82,13 +90,15 @@ export function LoginForm() {
           </button>
         </div>
       </label>
-      {error ? <p className="rounded-xl border border-red-300/20 bg-red-500/15 p-3 text-sm text-red-100">{error}</p> : null}
-      <Button className="h-12 w-full rounded-xl bg-gradient-to-r from-cyan-400 via-sky-500 to-blue-600 text-[15px] font-medium text-slate-950 shadow-[0_16px_35px_rgba(14,165,233,0.35)] transition hover:brightness-105" disabled={loading} type="submit">
+      {error ? <p className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</p> : null}
+      <Button className="h-12 w-full rounded-xl bg-[#cfe0ff] text-[15px] font-medium text-white transition hover:bg-[#bcd3ff]" disabled={loading} type="submit">
         {loading ? "Entrando" : "Entrar"}
       </Button>
-      <p className="text-center text-xs leading-5 text-slate-400">
+      </div>
+
+      <div className="mt-8 border-t border-slate-200 pt-6 text-sm text-slate-500">
         Ambiente protegido para a operação comercial da Central dos Planos.
-      </p>
+      </div>
     </form>
   );
 }
