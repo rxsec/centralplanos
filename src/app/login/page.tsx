@@ -4,17 +4,74 @@ import { LoginForm } from "@/modules/usuarios/components/login-form";
 
 export default function LoginPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.12),_transparent_24%),linear-gradient(180deg,#f8fbff_0%,#eef4ff_100%)] px-4 py-10">
-      <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <BrandLogo className="mx-auto mb-5 rounded-2xl border-slate-200 bg-[#04162b] shadow-[0_18px_40px_rgba(15,23,42,0.12)]" priority />
-          <h1 className="text-3xl font-semibold tracking-[-0.04em] text-slate-950">Central dos Planos</h1>
-          <p className="mt-2 text-sm text-slate-500">CRM comercial</p>
-        </div>
+    <main className="min-h-screen bg-white text-slate-950">
+      <div className="grid min-h-screen lg:grid-cols-[1.08fr_0.92fr]">
+        <section className="flex min-h-screen items-center justify-center bg-white px-6 py-10 sm:px-10 lg:px-14">
+          <div className="w-full max-w-[540px]">
+            <div className="mb-10 text-center">
+              <BrandLogo className="mx-auto mb-5 rounded-2xl border-slate-200 bg-[#04162b] shadow-[0_18px_40px_rgba(15,23,42,0.1)]" priority />
+              <h1 className="text-3xl font-semibold tracking-[-0.04em] text-slate-950">Central dos Planos</h1>
+              <p className="mt-2 text-sm text-slate-500">CRM comercial</p>
+            </div>
 
-        <Suspense fallback={<div className="h-72 rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_50px_rgba(15,23,42,0.07)]" />}>
-          <LoginForm />
-        </Suspense>
+            <Suspense fallback={<div className="h-72 rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_50px_rgba(15,23,42,0.07)]" />}>
+              <LoginForm />
+            </Suspense>
+          </div>
+        </section>
+
+        <section className="relative hidden overflow-hidden bg-[linear-gradient(180deg,#4383f4_0%,#2d6fe9_100%)] lg:flex lg:min-h-screen lg:flex-col lg:justify-between">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.24),_transparent_26%),radial-gradient(circle_at_bottom_left,_rgba(20,74,182,0.25),_transparent_30%)]" />
+
+          <div className="relative flex flex-1 items-center justify-center px-10 py-16">
+            <div className="relative w-full max-w-[420px]">
+              <div className="absolute right-2 top-[-18px] flex h-9 w-9 items-center justify-center rounded-full bg-[#2f5496] text-white/90 shadow-lg">
+                ×
+              </div>
+
+              <div className="rounded-[28px] bg-white p-5 shadow-[0_25px_80px_rgba(18,44,110,0.28)]">
+                <div className="rounded-[22px] border border-slate-100 bg-white p-4">
+                  <p className="text-xs font-semibold text-slate-400">Conversa em destaque</p>
+                  <div className="mt-4 rounded-[18px] bg-[#f8fbff] p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-sm font-semibold text-white">
+                        M
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-slate-900">Marcia • Consultora</p>
+                        <p className="mt-1 text-sm leading-6 text-slate-600">
+                          Olá! Posso te ajudar a encontrar o melhor plano de internet para o seu endereço.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 rounded-2xl bg-white p-3 shadow-sm">
+                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Cliente</p>
+                      <p className="mt-2 text-sm text-slate-700">Quero um plano com instalação rápida para minha casa.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-[22px] bg-white px-5 py-4 shadow-[0_20px_60px_rgba(18,44,110,0.22)]">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-sm text-slate-400">Escreva uma resposta...</p>
+                  <div className="flex items-center gap-2 text-slate-400">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200">☺</span>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200">+</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="absolute bottom-[-36px] right-5 flex h-16 w-16 items-center justify-center rounded-full bg-[#031424] shadow-[0_16px_40px_rgba(3,20,36,0.35)]">
+                <div className="text-sm font-semibold text-white">CP</div>
+                <div className="absolute bottom-1 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-semibold text-white">
+                  1
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </main>
   );
