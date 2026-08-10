@@ -37,6 +37,7 @@ export function DashboardMetrics({ data, loading }: { data: DashboardMetricsData
         helper="Entraram hoje"
         icon={icons.newLeads}
         href="/leads?created=today"
+        tone="blue"
       />
       <MetricCard
         title="Leads Fechados"
@@ -44,6 +45,7 @@ export function DashboardMetrics({ data, loading }: { data: DashboardMetricsData
         helper="Movidos para Fechado"
         icon={icons.wonLeads}
         href="/leads?status=WON"
+        tone="emerald"
       />
       <MetricCard
         title="Valor Total"
@@ -51,6 +53,7 @@ export function DashboardMetrics({ data, loading }: { data: DashboardMetricsData
         helper="Planos fechados"
         icon={icons.totalValue}
         href="/leads?status=WON"
+        tone="violet"
       />
       {showExpenses ? (
         <MetricCard
@@ -58,6 +61,7 @@ export function DashboardMetrics({ data, loading }: { data: DashboardMetricsData
           value={loading ? "..." : currency.format(data?.expenses ?? 0)}
           helper="A pagar"
           icon={icons.expenses}
+          tone="amber"
         />
       ) : null}
     </div>

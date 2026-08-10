@@ -56,20 +56,23 @@ export function DashboardOverview({ data, loading }: { data: DashboardOverviewDa
   return (
     <div className="mt-5 space-y-4">
       <div className="grid gap-4 xl:grid-cols-[1.4fr_1fr]">
-        <Card>
-          <CardHeader>
-            <CardTitle>Leads por Periodo</CardTitle>
-            <CardDescription>Entradas de leads no intervalo selecionado</CardDescription>
+        <Card className="overflow-hidden rounded-[28px] border-slate-200 shadow-[0_20px_50px_-36px_rgba(15,23,42,0.32)]">
+          <CardHeader className="border-b border-slate-100 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)]">
+            <CardTitle className="text-[24px] tracking-[-0.03em]">Leads por Periodo</CardTitle>
+            <CardDescription>Entrada de oportunidades ao longo da janela selecionada</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ left: -20, right: 12, top: 8, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="label" tickLine={false} axisLine={false} fontSize={12} />
-                  <YAxis allowDecimals={false} tickLine={false} axisLine={false} fontSize={12} />
-                  <Tooltip cursor={{ fill: "rgba(2,132,199,0.08)" }} />
-                  <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#dbeafe" />
+                  <XAxis dataKey="label" tickLine={false} axisLine={false} fontSize={12} stroke="#64748b" />
+                  <YAxis allowDecimals={false} tickLine={false} axisLine={false} fontSize={12} stroke="#64748b" />
+                  <Tooltip
+                    cursor={{ fill: "rgba(37,99,235,0.08)" }}
+                    contentStyle={{ borderRadius: 16, borderColor: "#dbeafe", boxShadow: "0 18px 45px rgba(15,23,42,0.08)" }}
+                  />
+                  <Bar dataKey="count" radius={[10, 10, 0, 0]}>
                     {chartData.map((entry, index) => (
                       <Cell key={entry.date} fill={chartColors[index % chartColors.length]} />
                     ))}
@@ -80,12 +83,12 @@ export function DashboardOverview({ data, loading }: { data: DashboardOverviewDa
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Status do Kanban</CardTitle>
-            <CardDescription>Distribuicao atual dos leads por etapa</CardDescription>
+        <Card className="overflow-hidden rounded-[28px] border-slate-200 shadow-[0_20px_50px_-36px_rgba(15,23,42,0.32)]">
+          <CardHeader className="border-b border-slate-100 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)]">
+            <CardTitle className="text-[24px] tracking-[-0.03em]">Status do Kanban</CardTitle>
+            <CardDescription>Distribuicao atual dos leads por etapa de vendas</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -94,13 +97,13 @@ export function DashboardOverview({ data, loading }: { data: DashboardOverviewDa
                       <Cell key={entry.name} fill={chartColors[index % chartColors.length]} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip contentStyle={{ borderRadius: 16, borderColor: "#dbeafe", boxShadow: "0 18px 45px rgba(15,23,42,0.08)" }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
             <div className="grid gap-2 sm:grid-cols-2">
               {funnelData.map((item, index) => (
-                <div key={item.status} className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
+                <div key={item.status} className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2.5 text-sm">
                   <span className="flex items-center gap-2">
                     <span
                       className="h-2.5 w-2.5 rounded-full"
@@ -117,20 +120,20 @@ export function DashboardOverview({ data, loading }: { data: DashboardOverviewDa
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[1fr_360px]">
-        <Card>
-          <CardHeader>
-            <CardTitle>Leads Recentes</CardTitle>
-            <CardDescription>Ultimas oportunidades cadastradas</CardDescription>
+        <Card className="overflow-hidden rounded-[28px] border-slate-200 shadow-[0_20px_50px_-36px_rgba(15,23,42,0.32)]">
+          <CardHeader className="border-b border-slate-100 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)]">
+            <CardTitle className="text-[24px] tracking-[-0.03em]">Leads Recentes</CardTitle>
+            <CardDescription>Ultimas oportunidades cadastradas na operacao</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="divide-y rounded-md border">
+          <CardContent className="p-6">
+            <div className="divide-y overflow-hidden rounded-[22px] border border-slate-200 bg-white">
               {loading ? (
                 <p className="p-4 text-sm text-muted-foreground">Carregando</p>
               ) : data?.recentLeads.length ? (
                 data.recentLeads.map((lead) => (
-                  <div key={lead.id} className="grid gap-3 p-4 text-sm md:grid-cols-[1fr_160px_140px]">
+                  <div key={lead.id} className="grid gap-3 p-4 text-sm transition-colors hover:bg-slate-50 md:grid-cols-[1fr_160px_140px]">
                     <div className="min-w-0">
-                      <p className="truncate font-medium">{lead.name}</p>
+                      <p className="truncate font-medium text-slate-950">{lead.name}</p>
                       <p className="text-xs text-muted-foreground">{lead.phone}</p>
                     </div>
                     <div className="text-xs text-muted-foreground">
@@ -150,23 +153,23 @@ export function DashboardOverview({ data, loading }: { data: DashboardOverviewDa
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Principais Planos Vendidos</CardTitle>
+        <Card className="overflow-hidden rounded-[28px] border-slate-200 shadow-[0_20px_50px_-36px_rgba(15,23,42,0.32)]">
+          <CardHeader className="border-b border-slate-100 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)]">
+            <CardTitle className="text-[24px] tracking-[-0.03em]">Principais Planos Vendidos</CardTitle>
             <CardDescription>Quantidade e valor total por plano fechado</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-3 p-6">
             {planData.length ? (
               planData.map((item, index) => (
-                <div key={item.planId ?? item.planName} className="rounded-md border p-3">
+                <div key={item.planId ?? item.planName} className="rounded-[20px] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] p-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span>{item.planName}</span>
-                    <span className="font-semibold">{currency.format(item.totalValue)}</span>
+                    <span className="font-medium text-slate-700">{item.planName}</span>
+                    <span className="font-semibold text-slate-950">{currency.format(item.totalValue)}</span>
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">{item.count} venda(s)</p>
-                  <div className="mt-2 h-2 rounded-full bg-muted">
+                  <div className="mt-3 h-2.5 rounded-full bg-slate-100">
                     <div
-                      className="h-2 rounded-full"
+                      className="h-2.5 rounded-full"
                       style={{
                         width: `${Math.min(item.count * 12, 100)}%`,
                         backgroundColor: chartColors[index % chartColors.length],
@@ -176,7 +179,7 @@ export function DashboardOverview({ data, loading }: { data: DashboardOverviewDa
                 </div>
               ))
             ) : (
-              <p className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
+              <p className="rounded-[20px] border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-muted-foreground">
                 Sem planos vendidos
               </p>
             )}
