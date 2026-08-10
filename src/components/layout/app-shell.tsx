@@ -13,7 +13,7 @@ export function AppShell({ title, children }: AppShellProps) {
     <CurrentUserProvider>
       <div className="min-h-screen bg-[#f6f9ff]">
         <Sidebar />
-        <div className="min-h-screen md:pl-[300px]">
+        <div className="min-h-screen md:pl-[336px]">
           <Header title={title} />
           <main className="mx-auto w-full max-w-7xl px-4 py-5 pb-24 sm:px-6 md:pb-5 lg:px-8">
             {children}

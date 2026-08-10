@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
-import { BrandLogo } from "@/components/layout/brand-logo";
 import { navigationItems } from "@/config/navigation";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { cn } from "@/utils/cn";
@@ -16,14 +15,10 @@ export function Sidebar() {
   );
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-40 hidden w-[300px] overflow-hidden rounded-r-[28px] border-r border-slate-200 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.08)] md:block">
+    <aside className="fixed inset-y-0 left-0 z-40 hidden w-[336px] overflow-hidden rounded-r-[28px] border-r border-slate-200 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.08)] md:block">
       <div className="flex h-full">
         <div className="flex w-[72px] flex-col items-center justify-between bg-[#1f4ca3] py-6">
-          <div className="space-y-5">
-            <div className="flex justify-center">
-              <BrandLogo compact className="h-11 w-11 rounded-xl border-white/10 bg-[#16397d]" imageClassName="p-0.5" priority />
-            </div>
-
+          <div className="pt-2">
             <div className="flex flex-col items-center gap-3">
               {visibleItems.slice(0, 7).map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -48,11 +43,11 @@ export function Sidebar() {
         </div>
 
         <div className="flex flex-1 flex-col bg-white">
-          <div className="border-b border-slate-200 px-5 py-6">
+          <div className="border-b border-slate-200 px-5 py-7">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="truncate text-xl font-semibold tracking-[-0.03em] text-slate-950">Central dos Planos</p>
-                <p className="truncate text-xs uppercase tracking-[0.24em] text-[#2563eb]">CRM comercial</p>
+                <p className="text-[31px] font-semibold leading-none tracking-[-0.04em] text-slate-950">Central dos Planos</p>
+                <p className="mt-3 text-xs uppercase tracking-[0.42em] text-[#2563eb]">CRM comercial</p>
               </div>
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-[#2563eb]">
                 <ChevronRight className="h-5 w-5" />
@@ -107,9 +102,9 @@ export function Sidebar() {
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1f4ca3] text-sm font-semibold text-white">
                 {(user?.name ?? "A").slice(0, 1).toUpperCase()}
               </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-slate-950">{user?.name ?? "Usuário"}</p>
-                <p className="truncate text-xs text-[#2563eb]">{user?.role === "ADMIN" ? "Administrador" : "Operador"}</p>
+              <div className="min-w-0 flex-1">
+                <p className="line-clamp-2 text-sm font-semibold leading-5 text-slate-950">{user?.name ?? "Usuário"}</p>
+                <p className="mt-0.5 text-xs text-[#2563eb]">{user?.role === "ADMIN" ? "Administrador" : "Operador"}</p>
               </div>
             </div>
           </div>
